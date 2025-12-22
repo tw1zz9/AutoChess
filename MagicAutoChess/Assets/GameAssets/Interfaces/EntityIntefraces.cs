@@ -1,4 +1,4 @@
-namespace GameAssets
+namespace GameAssets.Interfaces
 {
 
     /// <summary>
@@ -33,7 +33,7 @@ namespace GameAssets
     /// </summary>
     public interface IUtilitable
     {
-        void SpecialUtility();
+        void SpecialUtility(int _numberOfTeammaetes);
     }
 
     /// <summary>

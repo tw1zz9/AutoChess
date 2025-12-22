@@ -6,7 +6,7 @@ namespace GameAssets.Interfaces
     public interface ICellable
     {
         bool IsOccupied() => ExistingCharacter == null ? false: true;
-        ICharacter? ExistingCharacter { get; set; }
+        ICharacter ExistingCharacter { get; set; }
     }
     /// <summary>
     /// Стандартный интерфейс, описывающий 
