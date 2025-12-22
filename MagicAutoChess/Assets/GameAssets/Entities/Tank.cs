@@ -1,18 +1,30 @@
 using GameAssets.Interfaces;
+using System;
 
 namespace GameAssets.Entities 
 {
     public class Tank : IDamager, IUtilitable, IInformational
     {
-        private readonly int _maximumObtainableLevel = 30;
+        /// <summary>
+        /// Максимальный получаемый уровень персонажа.
+        /// </summary>
+        private readonly int _maximumObtainableLevel = 5;
 
+        /// <summary>
+        /// Флаг для определения состояния персонажа (принимает ли Tank часть урона союзников или нет).
+        /// </summary>
         private bool _isTaunting;
 
+        /// <summary>
+        /// Уникальный идентификатор
+        /// </summary>
+        public Guid ID { get; private set; }
+        
         public string Name { get; private set; }
 
-        public double Damage { get; set; }
-        public double Health { get; set; }
-        public double Armor { get; set; }
+        public int Damage { get; set; }
+        public int Health { get; set; }
+        public int Armor { get; set; }
 
         public bool Taunt { get => _isTaunting; private set => _isTaunting = value; }
 
@@ -26,6 +38,7 @@ namespace GameAssets.Entities
             Armor = 15;
             Level = 1;
             _isTaunting = false;
+            ID = new Guid();
         }
 
         public void Fight(ICharacter target)
@@ -51,10 +64,10 @@ namespace GameAssets.Entities
         {
             if (Level == _maximumObtainableLevel) return;
 
-            var _multiplicator = 1.8;
-            var _enhancedMultiplicator = 2;
+            var _multiplicator = 2;
+            var _enhancedMultiplicator = 3;
 
-            Damage *= _multiplicator;
+            Damage = Damage * _multiplicator;
             Health *= _enhancedMultiplicator;
             Armor *= _enhancedMultiplicator;
 
@@ -64,7 +77,7 @@ namespace GameAssets.Entities
         public string Description() => ToString();
         
         public override string ToString() => $"Troop: {Name}\nCurrent health: {Health}\n" +
-            $"";
+            $"Damage: {Damage}\nCurrent level: {Level}\nCurrent state: {Taunt}";
 
         public void SpecialUtility(int _numberOfTeammates)
         {
