@@ -64,7 +64,7 @@ namespace GameAssets.Entities
         public string Description() => ToString();
         
         public override string ToString() => $"Troop: {Name}\nCurrent health: {Health}\n" +
-            $"";
+            $"Damage: {Damage}\nCurrent level: {Level}\nCurrent state: {Taunt}";
 
         public void SpecialUtility(int _numberOfTeammates)
         {
