@@ -15,8 +15,8 @@ namespace GameAssets.Interfaces
     public interface ICharacter
     {
         void LevelUp();
-        double Health { get; set; }
-        double Armor { get; set; }
+        int Health { get; set; }
+        int Armor { get; set; }
         int Level { get; }
         bool IsAlive();
     }
