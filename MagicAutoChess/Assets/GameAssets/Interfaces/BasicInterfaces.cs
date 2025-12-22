@@ -1,4 +1,4 @@
-namespace GameAssets
+namespace GameAssets.Interfaces
 {
     /// <summary>
     /// Интерфейс, который описывает клетку, в которой может находится персонаж.
@@ -20,6 +20,4 @@ namespace GameAssets
         int Level { get; }
         bool IsAlive();
     }
-
-
 }
