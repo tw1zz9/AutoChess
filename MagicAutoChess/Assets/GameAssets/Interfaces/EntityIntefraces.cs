@@ -15,7 +15,7 @@ namespace GameAssets.Interfaces
     /// </summary>
     public interface IDamager : ICharacter
     {
-        double Damage { get; set; }
+        int Damage { get; set; }
         void Fight(ICharacter target);
     }
 
@@ -24,7 +24,7 @@ namespace GameAssets.Interfaces
     /// </summary>
     public interface IHealer : ICharacter
     {
-        double HealPower { get; set; }
+        int HealPower { get; set; }
         void Heal(ICharacter unit);
     }
 
