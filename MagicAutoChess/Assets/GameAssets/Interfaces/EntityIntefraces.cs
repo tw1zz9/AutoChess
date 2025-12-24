@@ -15,7 +15,11 @@ namespace GameAssets.Interfaces
     /// </summary>
     public interface IDamager : ICharacter
     {
-        int Damage { get; set; }
+        double Damage { get; }
+        /// <summary>
+        /// Метод нанесения урона.
+        /// </summary>
+        /// <param name="target">Юнит, которому снижается здоровье</param>
         void Fight(ICharacter target);
     }
 
@@ -24,7 +28,11 @@ namespace GameAssets.Interfaces
     /// </summary>
     public interface IHealer : ICharacter
     {
-        int HealPower { get; set; }
+        double HealPower { get; }
+        /// <summary>
+        /// Этим методом его нельзя воскресить, только увеличить ненулевое здоровье.
+        /// </summary>
+        /// <param name="unit">Юнит, которому восстанавливается здоровье</param>
         void Heal(ICharacter unit);
     }
 
