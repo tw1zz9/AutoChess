@@ -3,7 +3,7 @@ using System;
 
 namespace GameAssets.Entities 
 {
-    public class Healer : IHealer, IInformational
+    public class Healer : ICharacter, IHealer, IInformational
     {
         /// <summary>
         /// ћаксимальный получаемый уровень этого конкретного класса.
@@ -26,7 +26,7 @@ namespace GameAssets.Entities
             Name = "Angel";
             HealPower = 100;
             Health = 800;
-            Armor = 5;
+            Armor = 8;
             Level = 1;
         }
 
@@ -35,11 +35,6 @@ namespace GameAssets.Entities
             if (this.IsAlive()) Health -= damage / Armor;
         }
 
-        /// <summary>
-        /// –еализаци€ метода интерфейса IHealer
-        /// Ётим методом его нельз€ воскресить, только увеличить ненулевое здоровье.
-        /// </summary>
-        /// <param name="unit">ёнит, которому наноситс€ урон</param>
         public void Heal(ICharacter unit)
         {
             if (unit.IsAlive() || unit != null) unit.TakeDamage(-HealPower);

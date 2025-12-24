@@ -1,3 +1,6 @@
+using GameAssets.Interfaces.Effects;
+using System;
+
 namespace GameAssets.Interfaces
 {
 
@@ -13,7 +16,7 @@ namespace GameAssets.Interfaces
     /// <summary>
     /// Интерфейс, описывающий персонажа, способного наносить урон другим.
     /// </summary>
-    public interface IDamager : ICharacter
+    public interface IDamager
     {
         double Damage { get; }
         /// <summary>
@@ -26,7 +29,7 @@ namespace GameAssets.Interfaces
     /// <summary>
     /// Интерфейс, описывающий персонажа, способного восстанавливать здоровье союзникам.
     /// </summary>
-    public interface IHealer : ICharacter
+    public interface IHealer
     {
         double HealPower { get; }
         /// <summary>
@@ -37,12 +40,20 @@ namespace GameAssets.Interfaces
     }
 
     /// <summary>
-    /// Интерфейс, который реализуется персонажами, у которых есть особенные способности.
+    /// Интерфейс, который описывает персонажа, способного уклониться от атаки с каким-то шансом.
     /// </summary>
-    public interface IUtilitable
-    {
-        void SpecialUtility(int _numberOfTeammaetes);
+    public interface IEvading
+    { 
+        /// <summary>
+        /// Поле, хранящее данные о шансе уклонения
+        /// </summary>
+        double DodgeChance { get; }
+        /// <summary>
+        /// Действие, которое происходит прямо перед атакой по персонажу.
+        /// </summary>
+        Action<DamageContext> OnBeforeDamage { get; set; }
     }
+
 
     /// <summary>
     /// Интерфейс, который создаёт описание персонажа для отображения информации о нём.

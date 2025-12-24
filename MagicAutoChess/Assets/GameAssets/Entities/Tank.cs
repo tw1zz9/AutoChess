@@ -3,12 +3,14 @@ using System;
 
 namespace GameAssets.Entities 
 {
-    public class Tank : IDamager, IUtilitable, IInformational
+    public class Tank : ICharacter, IDamager, IUtilitable, IInformational
     {
         /// <summary>
         /// Максимальный получаемый уровень этого конкретного класса.
         /// </summary>
         private readonly int _maximumObtainableLevel = 5;
+
+        public event Action<ICharacter, double> OnDamageRecieved = null;
 
         /// <summary>
         /// Уникальный идентификатор
@@ -45,7 +47,8 @@ namespace GameAssets.Entities
 
         public void Fight(ICharacter target)
         {
-            if (target.IsAlive() || target != null) target.TakeDamage(Damage);
+            if (target.IsAlive() || target != null) 
+                target.TakeDamage(Damage);
         }
 
         public bool IsAlive()
@@ -75,11 +78,18 @@ namespace GameAssets.Entities
         public string Description() => ToString();
         
         public override string ToString() => $"Troop: {Name}\nCurrent health: {Health}\n" +
-            $"Damage: {Damage}\nCurrent level: {Level}\nCurrent state (Dodge stance): {Taunt}";
+            $"Damage: {Damage}\nCurrent level: {Level}\nCurrent state (Defence stance): {Taunt}";
 
-        public void SpecialUtility(int _numberOfTeammates)
+        public void SpecialUtility(bool OnOrOff)
         {
-            Taunt = true;
+            if (OnOrOff == true && Taunt == true) return;
+            if (OnOrOff == false && Taunt == false) return;
+
+            switch (OnOrOff) 
+            {
+                case (true): { Taunt = true; break; }
+                case (false): { Taunt = false; break; }
+            }
         }
     }
 }
