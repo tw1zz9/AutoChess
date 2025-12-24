@@ -6,27 +6,23 @@ namespace GameAssets.Entities
     public class Tank : IDamager, IUtilitable, IInformational
     {
         /// <summary>
-        /// ћаксимальный получаемый уровень персонажа.
+        /// ћаксимальный получаемый уровень этого конкретного класса.
         /// </summary>
         private readonly int _maximumObtainableLevel = 5;
-
-        /// <summary>
-        /// ‘лаг дл€ определени€ состо€ни€ персонажа (принимает ли Tank часть урона союзников или нет).
-        /// </summary>
-        private bool _isTaunting;
 
         /// <summary>
         /// ”никальный идентификатор
         /// </summary>
         public Guid ID { get; private set; }
-        
         public string Name { get; private set; }
+        public double Damage { get; private set; }
+        public double Health { get; private set; }
+        public double Armor { get; private set; }
 
-        public int Damage { get; set; }
-        public int Health { get; set; }
-        public int Armor { get; set; }
-
-        public bool Taunt { get => _isTaunting; private set => _isTaunting = value; }
+        /// <summary>
+        /// ‘лаг дл€ определени€ состо€ни€ персонажа (принимает ли Tank часть урона союзников или нет).
+        /// </summary>
+        public bool Taunt { get; private set; }
 
         public int Level { get; set; }
 
@@ -37,17 +33,19 @@ namespace GameAssets.Entities
             Health = 1000;
             Armor = 15;
             Level = 1;
-            _isTaunting = false;
+            Taunt = false;
             ID = new Guid();
+        }
+
+        public void TakeDamage(double damage)
+        {
+            var finalHealth = Health - damage / Armor;
+            Health = finalHealth > 0 ? finalHealth : 0;
         }
 
         public void Fight(ICharacter target)
         {
-            if (target.IsAlive())
-            {
-                target.Health -= Damage / Armor;
-            }
-            else return;
+            if (target.IsAlive() || target != null) target.TakeDamage(Damage);
         }
 
         public bool IsAlive()
@@ -64,10 +62,10 @@ namespace GameAssets.Entities
         {
             if (Level == _maximumObtainableLevel) return;
 
-            var _multiplicator = 2;
-            var _enhancedMultiplicator = 3;
+            var _multiplicator = 1.8;
+            var _enhancedMultiplicator = 2;
 
-            Damage = Damage * _multiplicator;
+            Damage *= _multiplicator;
             Health *= _enhancedMultiplicator;
             Armor *= _enhancedMultiplicator;
 
@@ -77,11 +75,11 @@ namespace GameAssets.Entities
         public string Description() => ToString();
         
         public override string ToString() => $"Troop: {Name}\nCurrent health: {Health}\n" +
-            $"Damage: {Damage}\nCurrent level: {Level}\nCurrent state: {Taunt}";
+            $"Damage: {Damage}\nCurrent level: {Level}\nCurrent state (Dodge stance): {Taunt}";
 
         public void SpecialUtility(int _numberOfTeammates)
         {
-            _isTaunting = true;
+            Taunt = true;
         }
     }
 }

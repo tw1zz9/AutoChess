@@ -1,3 +1,5 @@
+using System;
+
 namespace GameAssets.Interfaces
 {
     /// <summary>
@@ -14,10 +16,12 @@ namespace GameAssets.Interfaces
     /// </summary>
     public interface ICharacter
     {
+        Guid ID { get; }
         void LevelUp();
-        int Health { get; set; }
-        int Armor { get; set; }
+        double Health { get; }
+        double Armor { get; }
         int Level { get; }
         bool IsAlive();
+        void TakeDamage(double damage);
     }
 }
