@@ -1,107 +1,90 @@
-using GameAssets.Interfaces;
-using NUnit.Framework.Constraints;
 using System;
-using System.Xml.Linq;
+using GameAssets;
+using GameAssets.Combat;
+using GameAssets.Events;
+using GameAssets.Interfaces;
 
 namespace GameAssets.Entities
 {
     public class Trickster : ICharacter, IDamager, IEvading, IInformational
     {
-        private readonly int _maximumObtainableLevel = 4;
+        private readonly int _maximumObtainableLevel = 3;
 
-        private double _dodgeChance;
-
-        #region Описание стандартных свойств класса Trickster
-
-        public Guid ID { get; private set; }
+        public Guid ID { get; }
+        public Team Team { get; }
         public string Name { get; private set; }
+
         public double Health { get; private set; }
         public double Armor { get; private set; }
         public int Level { get; private set; }
         public double Damage { get; private set; }
 
-        #endregion 
+        private ICharacter _selectedTarget;
+        private double _dodgeChance;
 
-        #region Описание свойств для уклонения Trickster
-        /// <summary>
-        /// Реализация IEvading, с установленными границами значений конкретно для этого класса.
-        /// </summary>
-        public double DodgeChance
-        {
-            get => _dodgeChance;
-            private set
-            {
-                if (value < 0 || value > 0.4) return;
-                _dodgeChance = value;
-            }
-        }
-        #endregion
+        public double DodgeChance => _dodgeChance;
 
-        public Trickster()
+        public Trickster(Team team)
         {
+            Team = team;
             Name = "Sneaky Trickster";
-            ID = Guid.NewGuid();
             Health = 650;
             Damage = 200;
-            Level = 1;
             Armor = 5;
+            Level = 1;
+            ID = Guid.NewGuid();
+        }
+
+        public void SelectTarget(ICharacter target)
+        {
+            if (target.Team == Team) return;
+            _selectedTarget = target;
+        }
+
+        public void ResetTarget()
+        {
+            _selectedTarget = null;
+        }
+
+        public void PerformAttack()
+        {
+            if (_selectedTarget == null) return;
+
+            var context = new AttackContext(this, _selectedTarget, Damage);
+            EventManager.InvokeBeforeAttack(context);
+
+            if (context.Target.Team == Team || !context.Target.IsAlive()) return;
+            context.Target.TakeDamage(context.Damage);
         }
 
         public void TakeDamage(double damage)
         {
             if (!Dodge())
-            {
-                var finalHealth = Health - damage / Armor;
-                Health = finalHealth > 0 ? finalHealth : 0;
-            }
+                Health = Math.Max(0, Health - damage / Armor);
         }
 
-        public bool Dodge()
-        {
-            var random = new Random();
-            var probability = random.NextDouble();
-            if (probability < DodgeChance) return true;
-            return false;
-        }
-
-
-        public void Fight(ICharacter target)
-        {
-            if (target != null && target.IsAlive())
-                target.TakeDamage(Damage);
-        }
+        public bool Dodge() => new Random().NextDouble() < DodgeChance;
 
         public bool IsAlive()
         {
-            if (Health > 0) return true;
-            else
+            if (Health <= 0)
             {
-                Name = "(Dead)" + Name;
+                Name = "(Dead) " + Name;
                 return false;
             }
+            return true;
         }
 
         public void LevelUp()
         {
             if (Level == _maximumObtainableLevel) return;
-
-            var multiplicator = 1.5;
-            var enhancedMultiplicator = 2;
-
-            Damage *= multiplicator;
-            Armor *= multiplicator;
-            Health *= multiplicator;
-
-            var newChance = DodgeChance * enhancedMultiplicator;
-
-            DodgeChance = newChance;
-
+            Damage *= 1.5;
+            Health *= 1.5;
+            Armor *= 1.5;
             Level++;
         }
 
         public string Description() => ToString();
-
-        public override string ToString() => $"Troop: {Name}\nCurrent health: {Health}\n" +
-            $"Damage: {Damage}\nCurrent level: {Level}";
+        public override string ToString() => $"{Name} HP:{Health} DMG:{Damage}";
     }
 }

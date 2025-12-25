@@ -1,5 +1,5 @@
-using GameAssets.Interfaces.Effects;
 using System;
+using System.Collections.Generic;
 
 namespace GameAssets.Interfaces
 {
@@ -18,10 +18,12 @@ namespace GameAssets.Interfaces
     public interface ICharacter
     {
         Guid ID { get; }
-        void LevelUp();
+        Team Team { get; }
         double Health { get; }
         double Armor { get; }
         int Level { get; }
+
+        void LevelUp();
         bool IsAlive();
         void TakeDamage(double damage);
     }
