@@ -3,7 +3,7 @@ using System;
 
 namespace GameAssets.Entities 
 {
-    public class Tank : ICharacter, IDamager, IUtilitable, IInformational
+    public class Tank : ICharacter, IDamager, IInformational
     {
         /// <summary>
         /// Максимальный получаемый уровень этого конкретного класса.
@@ -80,16 +80,5 @@ namespace GameAssets.Entities
         public override string ToString() => $"Troop: {Name}\nCurrent health: {Health}\n" +
             $"Damage: {Damage}\nCurrent level: {Level}\nCurrent state (Defence stance): {Taunt}";
 
-        public void SpecialUtility(bool OnOrOff)
-        {
-            if (OnOrOff == true && Taunt == true) return;
-            if (OnOrOff == false && Taunt == false) return;
-
-            switch (OnOrOff) 
-            {
-                case (true): { Taunt = true; break; }
-                case (false): { Taunt = false; break; }
-            }
-        }
     }
 }

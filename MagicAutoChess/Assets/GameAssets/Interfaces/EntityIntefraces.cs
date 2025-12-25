@@ -1,4 +1,3 @@
-using GameAssets.Interfaces.Effects;
 using System;
 
 namespace GameAssets.Interfaces
@@ -45,13 +44,31 @@ namespace GameAssets.Interfaces
     public interface IEvading
     { 
         /// <summary>
-        /// Поле, хранящее данные о шансе уклонения
+        /// Поле, хранящее данные о шансе уклонения (0%-100%)
         /// </summary>
         double DodgeChance { get; }
         /// <summary>
-        /// Действие, которое происходит прямо перед атакой по персонажу.
+        /// Метод уклонения.
         /// </summary>
-        Action<DamageContext> OnBeforeDamage { get; set; }
+        bool Dodge();
+}
+
+    public interface IDefenging
+    {
+        /// <summary>
+        /// Поле, хранящее данные о проценте перенаправленного урона от союзников.
+        /// </summary>
+        double ReflectPower { get; }
+        /// <summary>
+        /// Метод установки защиты конкретному персонажу.
+        /// </summary>
+        /// <param name="ally">Союзник танка</param>
+        void TauntAndProtect(ICharacter ally);
+        /// <summary>
+        /// Метод, который вызывается в конце хода (когда весь необходимый урон поглощён танком)
+        /// </summary>
+        /// <param name="ally">Союзник танка</param>
+        void StopProtecting(ICharacter ally);
     }
 
 
