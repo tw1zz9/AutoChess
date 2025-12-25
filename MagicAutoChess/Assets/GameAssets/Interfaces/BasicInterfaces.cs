@@ -1,3 +1,4 @@
+using GameAssets.Interfaces.Effects;
 using System;
 
 namespace GameAssets.Interfaces

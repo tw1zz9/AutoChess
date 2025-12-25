@@ -1,4 +1,5 @@
 using GameAssets.Interfaces;
+using GameAssets.Interfaces.Effects;
 using System;
 
 namespace GameAssets.Entities 

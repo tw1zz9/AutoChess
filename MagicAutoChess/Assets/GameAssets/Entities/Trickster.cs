@@ -1,5 +1,4 @@
 using GameAssets.Interfaces;
-using GameAssets.Interfaces.Effects;
 using NUnit.Framework.Constraints;
 using System;
 using System.Xml.Linq;
@@ -36,7 +35,6 @@ namespace GameAssets.Entities
                 _dodgeChance = value;
             }
         }
-        public Action<DamageContext> OnBeforeDamage { get; set; }
         #endregion
 
         public Trickster()
@@ -51,17 +49,21 @@ namespace GameAssets.Entities
 
         public void TakeDamage(double damage)
         {
-            DamageContext query = new DamageContext() { Amount = damage };
-
-            OnBeforeDamage?.Invoke(query);
-
-            if (!query.IsDamageCancelled)
+            if (!Dodge())
             {
                 var finalHealth = Health - damage / Armor;
                 Health = finalHealth > 0 ? finalHealth : 0;
             }
-
         }
+
+        public bool Dodge()
+        {
+            var random = new Random();
+            var probability = random.NextDouble();
+            if (probability < DodgeChance) return true;
+            return false;
+        }
+
 
         public void Fight(ICharacter target)
         {
@@ -92,7 +94,7 @@ namespace GameAssets.Entities
 
             var newChance = DodgeChance * enhancedMultiplicator;
 
-            DodgeChance = newChance > 0.4 ? 0.4 : newChance;
+            DodgeChance = newChance;
 
             Level++;
         }
