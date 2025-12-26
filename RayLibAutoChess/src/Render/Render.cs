@@ -105,25 +105,34 @@ namespace RayLibAutoChess
 
                 if (Raylib.IsKeyPressed(KeyboardKey.KEY_O))
                 {
-                    var unit = _selectedBlueUnit ?? _selectedRedUnit;
-                    if (unit is IUltimate ultimate)
+                    // If already in targeting mode, cancel it
+                    if (_isSelectingUltimateTarget)
                     {
-                        var team = _selectedBlueUnit != null ? Team.Blue : Team.Red;
-                        var inventory = _gameManager.GetPlayerInventory(team);
+                        _isSelectingUltimateTarget = false;
+                        _ultimateCaster = null;
+                    }
+                    else
+                    {
+                        var unit = _selectedBlueUnit ?? _selectedRedUnit;
+                        if (unit is IUltimate ultimate)
+                        {
+                            var team = _selectedBlueUnit != null ? Team.Blue : Team.Red;
+                            var inventory = _gameManager.GetPlayerInventory(team);
 
-                        if (ultimate is ITargetedUltimate targeted)
-                        {
-                            // Enter targeting mode instead of spending gold immediately.
-                            if (ultimate.CanUseUltimate() && inventory.Gold >= EconomyManager.GetUltimateCost(ultimate))
+                            if (ultimate is ITargetedUltimate targeted)
                             {
-                                _isSelectingUltimateTarget = true;
-                                _ultimateCasterTeam = team;
-                                _ultimateCaster = targeted;
+                                // Enter targeting mode instead of spending gold immediately.
+                                if (ultimate.CanUseUltimate() && inventory.Gold >= EconomyManager.GetUltimateCost(ultimate))
+                                {
+                                    _isSelectingUltimateTarget = true;
+                                    _ultimateCasterTeam = team;
+                                    _ultimateCaster = targeted;
+                                }
                             }
-                        }
-                        else
-                        {
-                            try { _gameManager.UseUltimate(ultimate); } catch { /* ignore for UI */ }
+                            else
+                            {
+                                try { _gameManager.UseUltimate(ultimate); } catch { /* ignore for UI */ }
+                            }
                         }
                     }
                 }
@@ -133,12 +142,6 @@ namespace RayLibAutoChess
         private void HandleMouseClick()
         {
             var mousePos = Raylib.GetMousePosition();
-
-            if (_isSelectingUltimateTarget && _ultimateCaster != null)
-            {
-                if (TryHandleUltimateTargetClick(mousePos))
-                    return;
-            }
 
             if (_gameManager.CurrentPhase == GamePhase.Preparation)
             {
@@ -158,6 +161,13 @@ namespace RayLibAutoChess
 
                 if (cellX >= 0 && cellX < BoardCols && cellY >= 0 && cellY < BoardRows)
                 {
+                    // Handle ultimate targeting if in targeting mode
+                    if (_isSelectingUltimateTarget && _ultimateCaster != null)
+                    {
+                        if (TryHandleUltimateTargetClick(mousePos))
+                            return;
+                    }
+
                     var team = cellY == 0 ? Team.Blue : Team.Red;
                     var selected = team == Team.Blue ? _selectedBlueUnit : _selectedRedUnit;
 
@@ -178,7 +188,7 @@ namespace RayLibAutoChess
 
         private bool TryHandleUltimateTargetClick(System.Numerics.Vector2 mousePos)
         {
-            // Consume clicks on the board while targeting (so we don't accidentally place units).
+            // Only handle clicks on the board while targeting
             int boardW = BoardCols * CellSize;
             int boardH = BoardRows * CellSize;
 
@@ -192,17 +202,17 @@ namespace RayLibAutoChess
             var cell = _gameManager.GameBoard.GetCell(cellX, cellY);
             var target = cell?.ExistingCharacter;
 
-            // Always consume board clicks while targeting.
+            // If no target at clicked cell, don't consume the click
             if (target == null)
-                return true;
+                return false;
 
             // Must be ally (and alive)
             if (target.Team != _ultimateCasterTeam || !target.IsAlive())
-                return true;
+                return false;
 
             // If caster is an ICharacter, don't allow targeting self for buff ultimates
             if (_ultimateCaster is ICharacter caster && target.ID == caster.ID)
-                return true;
+                return false;
 
             try
             {
@@ -278,7 +288,7 @@ namespace RayLibAutoChess
             DrawTextEx(_font, roundText, new System.Numerics.Vector2(650, 22), UiTextMd, 1, Color.RAYWHITE);
 
             string hint = _isSelectingUltimateTarget
-                ? "TARGETING: click an ALLY unit on the board to cast Ultimate buff. ESC to cancel."
+                ? "TARGETING: click on an ALLY unit to buff it. O or ESC to cancel."
                 : "Click unit in inventory -> click your row to place | Upgrade: U or button | Ultimate: O or button | Undo: Z | SPACE: Start combat";
             DrawTextEx(_font, hint, new System.Numerics.Vector2(20, 50), UiTextXs, 1, new Color(200, 200, 210, 255));
         }
