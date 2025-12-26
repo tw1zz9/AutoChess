@@ -1,4 +1,3 @@
-using RayLibAutoChess.UI;
 
 namespace RayLibAutoChess
 {
@@ -11,7 +10,7 @@ namespace RayLibAutoChess
             try
             {
                 var gameManager = new GameManager();
-                var renderer = new GameRenderer(gameManager);
+                var renderer = new Render(gameManager);
 
                 Console.WriteLine("Game initialized. Starting renderer...");
                 renderer.Run();

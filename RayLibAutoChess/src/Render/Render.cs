@@ -2,9 +2,9 @@ using Raylib_cs;
 using static Raylib_cs.Raylib;
 using System.IO;
 
-namespace RayLibAutoChess.UI
+namespace RayLibAutoChess
 {
-    public class GameRenderer
+    public class Render
     {
         private const int ScreenWidth = 1200;
         private const int ScreenHeight = 800;
@@ -38,7 +38,7 @@ namespace RayLibAutoChess.UI
         private int _boardOffsetX;
         private int _boardOffsetY;
 
-        public GameRenderer(GameManager gameManager)
+        public Render(GameManager gameManager)
         {
             _gameManager = gameManager;
             Raylib.InitWindow(ScreenWidth, ScreenHeight, "Auto Chess");
@@ -311,8 +311,8 @@ namespace RayLibAutoChess.UI
             }
 
             // Row labels
-            DrawTextEx(_font, "BLUE ROW", new System.Numerics.Vector2(_boardOffsetX, _boardOffsetY - 22), 16, 1, new Color(40, 110, 255, 255));
-            DrawTextEx(_font, "RED ROW", new System.Numerics.Vector2(_boardOffsetX, _boardOffsetY + boardH + 8), 16, 1, new Color(230, 60, 60, 255));
+            DrawTextEx(_font, "BLUE ROW", new System.Numerics.Vector2(_boardOffsetX, _boardOffsetY - 30), 16, 1, new Color(40, 110, 255, 255));
+            DrawTextEx(_font, "RED ROW", new System.Numerics.Vector2(_boardOffsetX, _boardOffsetY + boardH + 16), 16, 1, new Color(230, 60, 60, 255));
 
             if (_isSelectingUltimateTarget)
             {
@@ -400,7 +400,7 @@ namespace RayLibAutoChess.UI
             int listW = PanelWidth - 2 * PanelPadding;
             int listH = 8 * PanelRowHeight;
 
-            DrawTextEx(_font, "Inventory units:", new System.Numerics.Vector2(listX, listY - 26), UiTextMd, 1, new Color(70, 70, 78, 255));
+            DrawTextEx(_font, "Inventory units:", new System.Numerics.Vector2(listX, listY + listH + 8), UiTextMd, 1, new Color(70, 70, 78, 255));
             DrawRectangle(listX, listY, listW, listH, new Color(245, 246, 250, 255));
             DrawRectangleLines(listX, listY, listW, listH, new Color(190, 195, 205, 255));
 
