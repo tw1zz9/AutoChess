@@ -1,4 +1,0 @@
-repository "MagicAutoChess 2025-12-21_21-00-40/MagicAutoChess@10171552226103@cloud"
-  path "/"
-    br "/main"
-    co "/main"
