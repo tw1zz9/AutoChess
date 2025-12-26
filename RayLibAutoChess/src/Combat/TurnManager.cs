@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RayLibAutoChess.Entities;
 
 namespace RayLibAutoChess
 {
@@ -97,7 +98,7 @@ namespace RayLibAutoChess
                 foreach (var healer in _healers)
                 {
                     healer.Heal();
-                    if (healer is Entities.Healer healerEntity && healerEntity.IsUltimateActive)
+                    if (healer is Healer healerEntity && healerEntity.IsUltimateActive)
                     {
                         var allAllies = GetAlliesForHealer(healer, allUnits);
                         // Ultimate heals all allies for 50% of normal heal power
@@ -211,7 +212,7 @@ namespace RayLibAutoChess
             {
                 if (unit is IEvading evading)
                 {
-                    if (unit is Entities.Trickster trickster)
+                    if (unit is Trickster trickster)
                     {
                         trickster.ResetDodgeChance();
                     }

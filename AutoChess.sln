@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RayLibAutoChess", "RayLibAutoChess\RayLibAutoChess.csproj", "{0A63137E-A6C0-34B0-5FE0-5B0DCE650330}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0A63137E-A6C0-34B0-5FE0-5B0DCE650330}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A63137E-A6C0-34B0-5FE0-5B0DCE650330}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A63137E-A6C0-34B0-5FE0-5B0DCE650330}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A63137E-A6C0-34B0-5FE0-5B0DCE650330}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {30BA5CC2-DA08-497A-BB89-FB02FA2EDAE5}
+	EndGlobalSection
+EndGlobal

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RayLibAutoChess.Entities;
 
 namespace RayLibAutoChess
 {
@@ -42,6 +43,22 @@ namespace RayLibAutoChess
         public GameManager()
         {
             Awake();
+        }
+
+        public void RestartGame()
+        {
+            // Reset all game state
+            CurrentPhase = GamePhase.Preparation;
+            RoundNumber = 1;
+            _player1Ready = false;
+            _player2Ready = false;
+            _undoStack.Clear();
+            _suppressUndoRecording = false;
+
+            // Reinitialize the game
+            InitializeGame();
+
+            Console.WriteLine("Game restarted!");
         }
 
         private void InitializeGame()
@@ -206,10 +223,10 @@ namespace RayLibAutoChess
         {
             foreach (var unit in units)
             {
-                if (unit is Entities.Tank tank) tank.ResetTarget();
-                else if (unit is Entities.Mage mage) mage.ResetTarget();
-                else if (unit is Entities.Trickster trickster) trickster.ResetTarget();
-                else if (unit is Entities.Healer healer) healer.ResetTarget();
+                if (unit is Tank tank) tank.ResetTarget();
+                else if (unit is Mage mage) mage.ResetTarget();
+                else if (unit is Trickster trickster) trickster.ResetTarget();
+                else if (unit is Healer healer) healer.ResetTarget();
             }
         }
 

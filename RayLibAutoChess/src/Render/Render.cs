@@ -1,6 +1,7 @@
 using Raylib_cs;
 using static Raylib_cs.Raylib;
 using System.IO;
+using RayLibAutoChess.Entities;
 
 namespace RayLibAutoChess
 {
@@ -22,6 +23,10 @@ namespace RayLibAutoChess
         private const int UiTextMd = 18;
         private const int UiTextSm = 16;
         private const int UiTextXs = 14;
+
+        private const int GameOverButtonWidth = 200;
+        private const int GameOverButtonHeight = 50;
+        private const int GameOverButtonSpacing = 30;
 
         private GameManager _gameManager;
         private Font _font;
@@ -142,6 +147,22 @@ namespace RayLibAutoChess
         private void HandleMouseClick()
         {
             var mousePos = Raylib.GetMousePosition();
+
+            // Handle GameOver buttons
+            if (_gameManager.CurrentPhase == GamePhase.GameOver)
+            {
+                if (IsPointInRect(mousePos, GetRestartGameButtonRect()))
+                {
+                    _gameManager.RestartGame();
+                    return;
+                }
+
+                if (IsPointInRect(mousePos, GetQuitGameButtonRect()))
+                {
+                    Raylib.CloseWindow();
+                    return;
+                }
+            }
 
             if (_gameManager.CurrentPhase == GamePhase.Preparation)
             {
@@ -391,11 +412,11 @@ namespace RayLibAutoChess
             DrawRectangle(panelX, panelY, PanelWidth, 42, teamColor);
             DrawTextEx(_font, teamName, new System.Numerics.Vector2(innerX, panelY + 11), UiTextLg, 1, Color.RAYWHITE);
 
-            DrawTextEx(_font, $"Gold: {inventory.Gold}", new System.Numerics.Vector2(innerX, panelY + 56), 22, 1, new Color(30, 30, 36, 255));
-            DrawTextEx(_font, $"Inventory: {inventory.GetAllUnits().Count()}/8", new System.Numerics.Vector2(innerX, panelY + 84), UiTextMd, 1, new Color(70, 70, 78, 255));
+            DrawTextEx(_font, $"Gold: {inventory.Gold}", new System.Numerics.Vector2(innerX, panelY + 60), 22, 1, new Color(30, 30, 36, 255));
+            DrawTextEx(_font, $"Inventory: {inventory.GetAllUnits().Count()}/8", new System.Numerics.Vector2(innerX, panelY + 95), UiTextMd, 1, new Color(70, 70, 78, 255));
 
             string selectedText = selected == null ? "Selected: (none)" : $"Selected: {selected.Name}  L{selected.Level}";
-            DrawTextEx(_font, selectedText, new System.Numerics.Vector2(innerX, panelY + 112), UiTextMd, 1, new Color(30, 30, 36, 255));
+            DrawTextEx(_font, selectedText, new System.Numerics.Vector2(innerX, panelY + 130), UiTextMd, 1, new Color(30, 30, 36, 255));
 
             DrawActionButtons(team);
             DrawInventoryPanel(team);
@@ -406,7 +427,7 @@ namespace RayLibAutoChess
             int panelX = GetPanelX(team);
             int panelY = PanelTopY;
             int listX = panelX + PanelPadding;
-            int listY = panelY + 260;
+            int listY = panelY + 290; // Moved down to avoid overlap with buttons
             int listW = PanelWidth - 2 * PanelPadding;
             int listH = 8 * PanelRowHeight;
 
@@ -443,6 +464,12 @@ namespace RayLibAutoChess
                 DrawTextEx(_font, gameOverText,
                     new System.Numerics.Vector2(ScreenWidth / 2 - textSize.X / 2, ScreenHeight / 2 - textSize.Y / 2),
                     48, 1, Color.RED);
+
+                // Draw restart button
+                DrawButton(GetRestartGameButtonRect(), "НАЧАТЬ СНАЧАЛА", true, Team.Blue, UiTextMd);
+
+                // Draw quit button
+                DrawButton(GetQuitGameButtonRect(), "ЗАКРЫТЬ ИГРУ", true, Team.Red, UiTextMd);
             }
 
             // Inventory panels during preparation
@@ -519,7 +546,7 @@ namespace RayLibAutoChess
             int panelY = PanelTopY;
             int innerX = panelX + PanelPadding;
             int btnW = PanelWidth - 2 * PanelPadding;
-            return new Rectangle(innerX, panelY + 150, btnW, 42);
+            return new Rectangle(innerX, panelY + 200, btnW, 42);
         }
 
         private Rectangle GetUltimateButtonRect(Team team)
@@ -528,7 +555,38 @@ namespace RayLibAutoChess
             int panelY = PanelTopY;
             int innerX = panelX + PanelPadding;
             int btnW = PanelWidth - 2 * PanelPadding;
-            return new Rectangle(innerX, panelY + 150 + 42 + 10, btnW, 42);
+            int btnH = PanelRowHeight;
+            int btnY = panelY + 160; // Fixed position after selected text
+
+            return new Rectangle(innerX, btnY, btnW, btnH);
+        }
+
+        private Rectangle GetRestartGameButtonRect()
+        {
+            int centerX = ScreenWidth / 2;
+            // Position buttons well below the "GAME OVER" text (48px font height + 50px padding)
+            int centerY = ScreenHeight / 2 + 50 + 50; // text height + padding
+
+            return new Rectangle(
+                centerX - GameOverButtonWidth / 2,
+                centerY,
+                GameOverButtonWidth,
+                GameOverButtonHeight
+            );
+        }
+
+        private Rectangle GetQuitGameButtonRect()
+        {
+            int centerX = ScreenWidth / 2;
+            // Position second button below the first with proper spacing
+            int centerY = ScreenHeight / 2 + 50 + 50 + GameOverButtonHeight + GameOverButtonSpacing;
+
+            return new Rectangle(
+                centerX - GameOverButtonWidth / 2,
+                centerY,
+                GameOverButtonWidth,
+                GameOverButtonHeight
+            );
         }
 
         private void DrawButton(Rectangle rect, string text, bool enabled, Team team, int fontSize = 16)
@@ -586,7 +644,7 @@ namespace RayLibAutoChess
             // Mage buff is applied to attackers on the board; for UI we reflect current active buffs.
             foreach (var u in _gameManager.GameBoard.GetFieldUnits(team))
             {
-                if (u is RayLibAutoChess.Entities.Mage mage && mage.IsUltimateActive && mage.ID != excludeUnitId)
+                if (u is Mage mage && mage.IsUltimateActive && mage.ID != excludeUnitId)
                 {
                     multiplier = Math.Max(multiplier, mage.BuffMultiplier);
                 }

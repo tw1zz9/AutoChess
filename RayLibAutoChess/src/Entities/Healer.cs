@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace RayLibAutoChess.Entities
 {
-    public class Healer : ICharacter, IHealer, IUltimate, IInformational, IUltimateActivatable, IUltimateResettable, ITargetSelectable
+    public class Healer : ICharacter, IHealer, IInformational, IUltimateActivatable, IUltimateResettable, ITargetSelectable
     {
         private readonly int _maximumObtainableLevel = 4;
 

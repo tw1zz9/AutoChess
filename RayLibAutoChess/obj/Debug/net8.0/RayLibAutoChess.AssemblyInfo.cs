@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("Auto Chess game implemented with RayLib")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+32f0bfdc6ed8762b1e04815e2f59bcbab35f34d7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+99b653fe7c316a27d87ed648fd6bc3eea0e9cafa")]
 [assembly: System.Reflection.AssemblyProductAttribute("RayLibAutoChess")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RayLibAutoChess")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
