@@ -6,9 +6,9 @@ using GameAssets.Interfaces;
 
 namespace GameAssets.Entities
 {
-    public class Trickster : ICharacter, IDamager, IEvading, IInformational
+    public class Trickster : ICharacter, IDamager, IEvading, IUltimate, IInformational
     {
-        private readonly int _maximumObtainableLevel = 3;
+        private readonly int _maximumObtainableLevel = 4;
 
         public Guid ID { get; }
         public Team Team { get; }
@@ -21,6 +21,8 @@ namespace GameAssets.Entities
 
         private ICharacter _selectedTarget;
         private double _dodgeChance;
+        private readonly double _baseDodgeChance = 0.25;
+        public bool IsUltimateActive { get; private set; }
 
         public double DodgeChance => _dodgeChance;
 
@@ -28,9 +30,10 @@ namespace GameAssets.Entities
         {
             Team = team;
             Name = "Sneaky Trickster";
-            Health = 650;
-            Damage = 200;
-            Armor = 5;
+            Health = 450;
+            Damage = 90;
+            Armor = 8; // 7.4% сопротивления
+            _dodgeChance = _baseDodgeChance;
             Level = 1;
             ID = Guid.NewGuid();
         }
@@ -44,6 +47,11 @@ namespace GameAssets.Entities
         public void ResetTarget()
         {
             _selectedTarget = null;
+        }
+
+        public ICharacter GetSelectedTarget()
+        {
+            return _selectedTarget;
         }
 
         public void PerformAttack()
@@ -60,7 +68,12 @@ namespace GameAssets.Entities
         public void TakeDamage(double damage)
         {
             if (!Dodge())
-                Health = Math.Max(0, Health - damage / Armor);
+            {
+                // Процентное сопротивление урону: final_damage = damage * (100 / (100 + armor))
+                double resistance = 100.0 / (100.0 + Armor);
+                double finalDamage = damage * resistance;
+                Health = Math.Max(0, Health - finalDamage);
+            }
         }
 
         public bool Dodge() => new Random().NextDouble() < DodgeChance;
@@ -78,13 +91,37 @@ namespace GameAssets.Entities
         public void LevelUp()
         {
             if (Level == _maximumObtainableLevel) return;
-            Damage *= 1.5;
-            Health *= 1.5;
-            Armor *= 1.5;
+            Damage = (int)(Damage * 1.7); // +70% урона
+            Health = (int)(Health * 1.6); // +60% здоровья
+            Armor += 5; // +5 брони
             Level++;
         }
 
+        public string UltimateName => "Shadow Step";
+        public string UltimateDescription => $"Increases dodge chance to 100% for one turn";
+        public int UltimateCost => 5;
+
+        public bool CanUseUltimate() => IsAlive();
+
+        public void UseUltimate()
+        {
+            // Ультимейт Trickster активируется в фазе подготовки
+            // В бою применяется 100% уклонение
+            IsUltimateActive = true;
+            _dodgeChance = 1.0;
+        }
+
+        public void ResetUltimateState()
+        {
+            IsUltimateActive = false;
+        }
+
+        public void ResetDodgeChance()
+        {
+            _dodgeChance = _baseDodgeChance;
+        }
+
         public string Description() => ToString();
-        public override string ToString() => $"{Name} HP:{Health} DMG:{Damage}";
+        public override string ToString() => $"{Name} HP:{Health} DMG:{Damage} Dodge:{DodgeChance:P0}";
     }
 }

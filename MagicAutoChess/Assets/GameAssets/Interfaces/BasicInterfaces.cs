@@ -3,18 +3,14 @@ using System.Collections.Generic;
 
 namespace GameAssets.Interfaces
 {
-    /// <summary>
-    /// »нтерфейс, который описывает клетку, в которой может находитс€ персонаж.
-    /// </summary>
     public interface ICellable
     {
+        ICharacter ExistingCharacter { get; }
         bool IsOccupied() => ExistingCharacter == null ? false: true;
-        ICharacter ExistingCharacter { get; set; }
+        void SetCharacter(ICharacter character);
+        void RemoveCharacter();
     }
-    /// <summary>
-    /// —тандартный интерфейс, описывающий 
-    /// обычного персонажа без способностей
-    /// </summary>
+
     public interface ICharacter
     {
         Guid ID { get; }
@@ -26,5 +22,12 @@ namespace GameAssets.Interfaces
         void LevelUp();
         bool IsAlive();
         void TakeDamage(double damage);
+    }
+
+    public interface IPlayersInventory
+    {
+        void AddUnits(IEnumerable<ICharacter> unit); 
+        void RemoveUnits(IEnumerable<ICharacter> unit); 
+        int Gold { get; }
     }
 }

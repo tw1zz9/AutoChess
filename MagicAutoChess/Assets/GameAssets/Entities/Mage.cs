@@ -6,9 +6,9 @@ using GameAssets.Interfaces;
 
 namespace GameAssets.Entities
 {
-    public class Mage : ICharacter, IDamager, IInformational
+    public class Mage : ICharacter, IDamager, IUltimate, IInformational
     {
-        private readonly int _maximumObtainableLevel = 3;
+        private readonly int _maximumObtainableLevel = 4;
 
         public Guid ID { get; }
         public Team Team { get; }
@@ -26,17 +26,18 @@ namespace GameAssets.Entities
         public double Damage { get; private set; }
 
         private ICharacter _selectedTarget;
+        public bool IsUltimateActive { get; private set; }
 
-        // ��������� ���� �� 1 ���
+        // ��������� ���� �� 1 ���
         public double BuffMultiplier { get; private set; } = 1.5;
 
         public Mage(Team team)
         {
             Team = team;
             Name = "Mage";
-            Health = 500;
-            Armor = 3;
-            Damage = 150;
+            Health = 400;
+            Armor = 5; // 5% сопротивления
+            Damage = 80;
             Level = 1;
             ID = Guid.NewGuid();
         }
@@ -52,6 +53,11 @@ namespace GameAssets.Entities
         public void ResetTarget()
         {
             _selectedTarget = null;
+        }
+
+        public ICharacter GetSelectedTarget()
+        {
+            return _selectedTarget;
         }
 
         #endregion
@@ -76,6 +82,7 @@ namespace GameAssets.Entities
 
         public void ActivateDamageBuff(TurnManager turnManager)
         {
+            IsUltimateActive = true;
             turnManager.RegisterOneTurnEffect(ApplyDamageBuff);
         }
 
@@ -91,7 +98,10 @@ namespace GameAssets.Entities
 
         public void TakeDamage(double damage)
         {
-            Health -= damage;
+            // Процентное сопротивление урону: final_damage = damage * (100 / (100 + armor))
+            double resistance = 100.0 / (100.0 + Armor);
+            double finalDamage = damage * resistance;
+            Health = Math.Max(0, Health - finalDamage);
         }
 
         public bool IsAlive()
@@ -108,15 +118,32 @@ namespace GameAssets.Entities
         {
             if (Level == _maximumObtainableLevel) return;
 
-            Health *= 1.8;
-            Armor *= 1.8;
-            Damage *= 1.5;
-            BuffMultiplier *= 1.3;
+            Health = (int)(Health * 1.6); // +60% здоровья
+            Armor += 3; // +3 брони
+            Damage = (int)(Damage * 1.8); // +80% урона
+            BuffMultiplier += 0.2; // +0.2 к баффу
 
             Level++;
         }
 
         #endregion
+
+        public string UltimateName => "Arcane Surge";
+        public string UltimateDescription => $"Doubles damage buff multiplier for one turn";
+        public int UltimateCost => 5;
+
+        public bool CanUseUltimate() => IsAlive();
+
+        public void UseUltimate()
+        {
+            // Ультимейт Mage активируется через ActivateDamageBuff в фазе подготовки
+            // В бою просто проверяем флаг IsUltimateActive
+        }
+
+        public void ResetUltimateState()
+        {
+            IsUltimateActive = false;
+        }
 
         public string Description() => ToString();
         public override string ToString() =>

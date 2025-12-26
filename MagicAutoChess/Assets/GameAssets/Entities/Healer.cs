@@ -1,13 +1,15 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using GameAssets;
 using GameAssets.Combat;
 using GameAssets.Interfaces;
 
 namespace GameAssets.Entities
 {
-    public class Healer : ICharacter, IHealer, IInformational
+    public class Healer : ICharacter, IHealer, IUltimate, IInformational
     {
-        private readonly int _maximumObtainableLevel = 3;
+        private readonly int _maximumObtainableLevel = 4;
 
         public Guid ID { get; private set; }
         public Team Team { get; }
@@ -19,14 +21,15 @@ namespace GameAssets.Entities
         public int Level { get; private set; }
 
         private ICharacter _selectedAlly;
+        public bool IsUltimateActive { get; private set; }
 
         public Healer(Team team)
         {
             Team = team;
             Name = "Angel";
-            HealPower = 100;
-            Health = 800;
-            Armor = 8;
+            HealPower = 60;
+            Health = 500;
+            Armor = 15; // 13% сопротивления
             Level = 1;
             ID = Guid.NewGuid();
         }
@@ -43,16 +46,32 @@ namespace GameAssets.Entities
             _selectedAlly = null;
         }
 
+        public ICharacter GetSelectedTarget()
+        {
+            return _selectedAlly;
+        }
+
         public void Heal()
         {
             if (_selectedAlly == null || !_selectedAlly.IsAlive()) return;
             _selectedAlly.TakeDamage(-HealPower);
         }
 
+        public void HealAll(IEnumerable<ICharacter> allies)
+        {
+            foreach (var ally in allies.Where(a => a.Team == Team && a.IsAlive()))
+            {
+                ally.TakeDamage(-HealPower * 0.5); // Массовое лечение слабее
+            }
+        }
+
         public void TakeDamage(double damage)
         {
             if (!IsAlive()) return;
-            Health -= damage / Armor;
+            // Процентное сопротивление урону: final_damage = damage * (100 / (100 + armor))
+            double resistance = 100.0 / (100.0 + Armor);
+            double finalDamage = damage * resistance;
+            Health = Math.Max(0, Health - finalDamage);
         }
 
         public bool IsAlive()
@@ -69,10 +88,28 @@ namespace GameAssets.Entities
         {
             if (Level >= _maximumObtainableLevel) return;
 
-            HealPower *= 1.8;
-            Health *= 2;
-            Armor *= 2;
+            HealPower = (int)(HealPower * 1.7); // +70% лечения
+            Health = (int)(Health * 1.8); // +80% здоровья
+            Armor += 8; // +8 брони
             Level++;
+        }
+
+        public string UltimateName => "Divine Light";
+        public string UltimateDescription => $"Heals all allies for 50% of normal healing power";
+        public int UltimateCost => 5;
+
+        public bool CanUseUltimate() => IsAlive();
+
+        public void UseUltimate()
+        {
+            // Ультимейт Healer активируется в фазе подготовки
+            // В бою применяется массовое лечение через HealAll
+            IsUltimateActive = true;
+        }
+
+        public void ResetUltimateState()
+        {
+            IsUltimateActive = false;
         }
 
         public string Description() => ToString();
