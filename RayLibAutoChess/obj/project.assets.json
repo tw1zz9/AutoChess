@@ -218,23 +218,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\tw1zz9\\.nuget\\packages\\": {},
+    "C:\\Users\\HOST\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\tw1zz9\\Documents\\GitHub\\AutoChess\\RayLibAutoChess\\RayLibAutoChess.csproj",
+      "projectUniqueName": "C:\\Users\\HOST\\Documents\\GitHub\\AutoChess\\RayLibAutoChess\\RayLibAutoChess.csproj",
       "projectName": "RayLibAutoChess",
-      "projectPath": "C:\\Users\\tw1zz9\\Documents\\GitHub\\AutoChess\\RayLibAutoChess\\RayLibAutoChess.csproj",
-      "packagesPath": "C:\\Users\\tw1zz9\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\tw1zz9\\Documents\\GitHub\\AutoChess\\RayLibAutoChess\\obj\\",
+      "projectPath": "C:\\Users\\HOST\\Documents\\GitHub\\AutoChess\\RayLibAutoChess\\RayLibAutoChess.csproj",
+      "packagesPath": "C:\\Users\\HOST\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\HOST\\Documents\\GitHub\\AutoChess\\RayLibAutoChess\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\tw1zz9\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\HOST\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -243,6 +243,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -292,7 +293,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.308/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
