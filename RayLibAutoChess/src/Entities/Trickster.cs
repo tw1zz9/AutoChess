@@ -2,7 +2,7 @@ using System;
 
 namespace RayLibAutoChess.Entities
 {
-    public class Trickster : ICharacter, IDamager, IEvading, IInformational, IUltimateActivatable, IUltimateResettable, ITargetSelectable
+    public class Trickster : ICharacter, IDamager, IEvading, IUltimate, IInformational, IUltimateActivatable, IUltimateResettable, ITargetSelectable
     {
         private readonly int _maximumObtainableLevel = 4;
 
@@ -90,14 +90,14 @@ namespace RayLibAutoChess.Entities
             if (damage < 0)
                 throw new ArgumentException("Damage cannot be negative. Use Heal() method instead.", nameof(damage));
 
-            // Ultimate provides 100% dodge chance
+            // Ультимейт дает 100% шанс уклонения
             if (IsUltimateActive)
             {
                 Console.WriteLine($"{Name} perfectly dodged the attack with ultimate!");
                 return;
             }
 
-            // Check for normal dodge
+            // Проверяем обычное уклонение
             if (Dodge())
             {
                 Console.WriteLine($"{Name} dodged the attack!");
@@ -147,7 +147,7 @@ namespace RayLibAutoChess.Entities
             DodgeChance += 0.05;
 
             Level++;
-            // On level up, heal to full new max HP.
+            // При повышении уровня, восстанавливаем здоровье до максимального.
             Health = GetMaxHealth();
         }
 
@@ -162,7 +162,7 @@ namespace RayLibAutoChess.Entities
             if (!IsAlive())
                 throw new InvalidOperationException("Cannot activate ultimate while dead.");
 
-            // Queue ultimate to be applied on the next combat round
+            // Помещаем ультимейт в очередь для применения в следующем раунде боя
             _ultimateQueued = true;
         }
 
@@ -174,7 +174,7 @@ namespace RayLibAutoChess.Entities
 
         public void ApplyActiveUltimateEffect()
         {
-            // Not used for one-turn effects
+            // Не используется для одноходовых эффектов
         }
 
         public void ApplyOneTurnUltimateEffect(TurnManager turnManager)
@@ -194,7 +194,7 @@ namespace RayLibAutoChess.Entities
         {
             if (context.Target == this)
             {
-                // 100% dodge chance for this turn
+                // 100% шанс уклонения на этот ход
                 context.Damage = 0;
                 Console.WriteLine($"{Name} perfectly dodged the attack!");
             }
@@ -202,7 +202,7 @@ namespace RayLibAutoChess.Entities
 
         public void ResetDodgeChance()
         {
-            // Reset temporary dodge effects if any
+            // Сбрасываем временные эффекты уклонения, если они есть
         }
 
         public ICharacter? GetSelectedTarget()

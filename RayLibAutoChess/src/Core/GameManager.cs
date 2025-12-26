@@ -47,7 +47,7 @@ namespace RayLibAutoChess
 
         public void RestartGame()
         {
-            // Reset all game state
+            // Сбрасываем все состояние игры
             CurrentPhase = GamePhase.Preparation;
             RoundNumber = 1;
             _player1Ready = false;
@@ -55,7 +55,7 @@ namespace RayLibAutoChess
             _undoStack.Clear();
             _suppressUndoRecording = false;
 
-            // Reinitialize the game
+            // Переинициализируем игру
             InitializeGame();
 
             Console.WriteLine("Game restarted!");
@@ -100,13 +100,13 @@ namespace RayLibAutoChess
             if (CurrentPhase != GamePhase.Preparation)
                 throw new InvalidOperationException("Can only ready players during preparation phase.");
 
-            // Check if both players have at least one unit on the board
+            // Проверяем, есть ли у обоих игроков хотя бы один юнит на доске
             bool blueHasUnits = GameBoard.GetFieldUnits(Team.Blue).Any();
             bool redHasUnits = GameBoard.GetFieldUnits(Team.Red).Any();
 
             if (!blueHasUnits || !redHasUnits)
             {
-                // Don't start combat yet, wait for both players to place units
+                // Пока не начинаем бой, ждем пока оба игрока разместят юнитов
                 Console.WriteLine("Waiting for both players to place at least one unit on the board.");
                 return;
             }
@@ -125,7 +125,7 @@ namespace RayLibAutoChess
             SetGamePhase(GamePhase.Combat);
             Console.WriteLine($"Round {RoundNumber}: Combat phase started!");
 
-            // Undo is only available in preparation.
+            // Отмена доступна только на этапе подготовки.
             _undoStack.Clear();
 
             ExecuteCombat();
@@ -265,7 +265,7 @@ namespace RayLibAutoChess
 
                 RecordUndo(() =>
                 {
-                    // Undo placement: remove from board and return to inventory.
+                    // Отмена размещения: убираем с доски и возвращаем в инвентарь.
                     GameBoard.RemoveUnit(unit);
                     inventory.AddUnit(unit);
                 });
@@ -280,7 +280,7 @@ namespace RayLibAutoChess
 
             GameBoard.RemoveUnit(unit);
 
-            // Return back to the owner's inventory so players can reposition during preparation.
+            // Возвращаем обратно в инвентарь владельца, чтобы игроки могли переразместить во время подготовки.
             var inventory = unit.Team == Team.Blue ? Player1Inventory : Player2Inventory;
             inventory.AddUnit(unit);
         }

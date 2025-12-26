@@ -2,7 +2,7 @@ using System;
 
 namespace RayLibAutoChess.Entities
 {
-    public class Mage : ICharacter, IDamager, IInformational, IUltimateActivatable, IUltimateResettable, ITargetSelectable
+    public class Mage : ICharacter, IDamager, IUltimate, ITargetedUltimate, IInformational, IUltimateActivatable, IUltimateResettable, ITargetSelectable
     {
         private readonly int _maximumObtainableLevel = 4;
 
@@ -91,7 +91,7 @@ namespace RayLibAutoChess.Entities
         {
             if (context.Attacker.Team != Team) return;
             if (context.Attacker.ID == ID) return;
-            // Buff only the chosen ally (not enemies, and not the mage itself)
+            // Бафф применяется только к выбранному союзнику (не к врагам и не к самому магу)
             if (_ultimateTargetId == null || context.Attacker.ID != _ultimateTargetId.Value) return;
             context.Damage *= BuffMultiplier;
         }
@@ -144,7 +144,7 @@ namespace RayLibAutoChess.Entities
             BuffMultiplier += 0.2;
 
             Level++;
-            // On level up, heal to full new max HP.
+            // При повышении уровня, восстанавливаем здоровье до максимального.
             Health = GetMaxHealth();
         }
 
@@ -162,7 +162,7 @@ namespace RayLibAutoChess.Entities
             if (_ultimateTarget == null)
                 throw new InvalidOperationException("Mage ultimate requires selecting a target first.");
 
-            // Queue ultimate to be applied on the next combat round (TurnManager will pick it up).
+            // Помещаем ультимейт в очередь для применения в следующем раунде боя (TurnManager его подхватит).
             _ultimateQueued = true;
         }
 
@@ -205,7 +205,7 @@ namespace RayLibAutoChess.Entities
             if (target == null)
                 throw new ArgumentNullException(nameof(target), "Target cannot be null.");
 
-            // Mage ultimate is a buff: only allies, and not self.
+            // Ультимейт мага - это бафф: только союзники, и не сам маг.
             if (target.Team != Team)
                 throw new ArgumentException("Mage ultimate can only target allied units.", nameof(target));
 

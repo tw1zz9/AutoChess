@@ -2,7 +2,7 @@ using System;
 
 namespace RayLibAutoChess.Entities
 {
-    public class Tank : ICharacter, IDamager, IInformational, IUltimateActivatable, IUltimateResettable, ITargetSelectable
+    public class Tank : ICharacter, IDamager, IUltimate, IInformational, IUltimateActivatable, IUltimateResettable, ITargetSelectable
     {
         private readonly int _maximumObtainableLevel = 4;
 
@@ -133,7 +133,7 @@ namespace RayLibAutoChess.Entities
             ShieldAmount = (int)(ShieldAmount * 1.3);
 
             Level++;
-            // On level up, heal to full new max HP.
+            // При повышении уровня, восстанавливаем здоровье до максимального.
             Health = GetMaxHealth();
         }
 
@@ -148,7 +148,7 @@ namespace RayLibAutoChess.Entities
             if (!IsAlive())
                 throw new InvalidOperationException("Cannot activate ultimate while dead.");
 
-            // Queue ultimate to be applied on the next combat round (TurnManager will pick it up).
+            // Помещаем ультимейт в очередь для применения в следующем раунде боя (TurnManager его подхватит).
             _ultimateQueued = true;
         }
 

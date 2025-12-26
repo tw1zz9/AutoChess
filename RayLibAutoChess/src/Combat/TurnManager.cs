@@ -14,7 +14,7 @@ namespace RayLibAutoChess
         private readonly List<IDamager> _attackers = new();
         private readonly List<IHealer> _healers = new();
 
-        // Tank taunt effect - all enemies target this tank for one turn
+        // Эффект таунта танка - все враги атакуют этот танк один ход
         private ICharacter? _tauntingTank;
 
         public void SetReady(int playerId)
@@ -101,7 +101,7 @@ namespace RayLibAutoChess
                     if (healer is Healer healerEntity && healerEntity.IsUltimateActive)
                     {
                         var allAllies = GetAlliesForHealer(healer, allUnits);
-                        // Ultimate heals all allies for 50% of normal heal power
+                        // Ультимейт лечит всех союзников на 50% от обычной силы лечения
                         double ultimateHealAmount = healerEntity.HealPower * 0.5;
                         foreach (var ally in allAllies.Where(a => a.IsAlive()))
                         {
@@ -128,7 +128,7 @@ namespace RayLibAutoChess
             _attackers.Clear();
             _healers.Clear();
 
-            // Reset taunting tank effect
+            // Сбрасываем эффект таунта танка
             _tauntingTank = null;
 
             ResetTemporaryEffects(allUnits);
@@ -151,7 +151,7 @@ namespace RayLibAutoChess
                     var selectedTarget = GetSelectedTarget(damager);
                     if (selectedTarget == null || !selectedTarget.IsAlive())
                     {
-                        // If there's a taunting tank from the enemy team, all attackers target it
+                        // Если есть таунтящий танк от команды противника, все атакующие выбирают его целью
                         if (_tauntingTank != null && _tauntingTank.IsAlive() && _tauntingTank.Team != character.Team)
                         {
                             character.SelectTarget(_tauntingTank);
@@ -193,7 +193,7 @@ namespace RayLibAutoChess
 
         private double GetMaxHealth(ICharacter character)
         {
-            // Simple approximation - in real implementation this would be more complex
+            // Простое приближение - в реальной реализации это было бы сложнее
             return character.Health * 1.5;
         }
 

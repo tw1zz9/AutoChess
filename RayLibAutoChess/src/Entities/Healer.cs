@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace RayLibAutoChess.Entities
 {
-    public class Healer : ICharacter, IHealer, IInformational, IUltimateActivatable, IUltimateResettable, ITargetSelectable
+    public class Healer : ICharacter, IHealer, IUltimate, IInformational, IUltimateActivatable, IUltimateResettable, ITargetSelectable
     {
         private readonly int _maximumObtainableLevel = 4;
 
@@ -135,7 +135,7 @@ namespace RayLibAutoChess.Entities
             AreaHealPower = (int)(AreaHealPower * 1.4);
 
             Level++;
-            // On level up, heal to full new max HP.
+            // При повышении уровня, восстанавливаем здоровье до максимального.
             Health = GetMaxHealth();
         }
 

@@ -6,7 +6,7 @@ namespace RayLibAutoChess
 
         public static int CalculateRoundReward(int roundNumber)
         {
-            // Base reward increases with round number
+            // Базовая награда увеличивается с номером раунда
             return Math.Max(1, roundNumber / 2 + 1);
         }
 
@@ -15,13 +15,13 @@ namespace RayLibAutoChess
             if (unit == null)
                 throw new ArgumentNullException(nameof(unit));
 
-            // Fixed costs for level upgrades
+            // Фиксированные стоимости для улучшения уровней
             return unit.Level switch
             {
-                1 => 10, // 1->2 level
-                2 => 15, // 2->3 level
-                3 => 20, // 3->4 level
-                _ => 0   // Max level or invalid
+                1 => 10, // 1->2 уровень
+                2 => 15, // 2->3 уровень
+                3 => 20, // 3->4 уровень
+                _ => 0   // Максимальный уровень или недействительно
             };
         }
 

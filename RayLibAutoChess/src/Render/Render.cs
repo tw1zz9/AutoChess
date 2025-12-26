@@ -34,12 +34,12 @@ namespace RayLibAutoChess
         private ICharacter? _selectedBlueUnit;
         private ICharacter? _selectedRedUnit;
 
-        // Target selection mode for targeted ultimates (e.g., Mage)
+        // Режим выбора цели для таргетированных ультимейтов (например, Маг)
         private bool _isSelectingUltimateTarget;
         private Team _ultimateCasterTeam;
         private ITargetedUltimate? _ultimateCaster;
 
-        // Computed layout
+        // Вычисленная компоновка
         private int _boardOffsetX;
         private int _boardOffsetY;
 
@@ -49,7 +49,7 @@ namespace RayLibAutoChess
             Raylib.InitWindow(ScreenWidth, ScreenHeight, "Auto Chess");
             Raylib.SetTargetFPS(60);
 
-            // Font: try to load from assets if present, otherwise use default to avoid runtime warnings.
+            // Шрифт: пытаемся загрузить из assets, если есть, иначе используем по умолчанию, чтобы избежать предупреждений во время выполнения.
             const string fontPath = "assets/fonts/default.ttf";
             _font = File.Exists(fontPath) ? LoadFont(fontPath) : GetFontDefault();
 
@@ -69,7 +69,7 @@ namespace RayLibAutoChess
 
         private void Update()
         {
-            // Handle input
+            // Обрабатываем ввод
             if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_LEFT))
             {
                 HandleMouseClick();
@@ -83,7 +83,7 @@ namespace RayLibAutoChess
 
             if (Raylib.IsKeyPressed(KeyboardKey.KEY_SPACE))
             {
-                // Ready players
+                // Готовим игроков
                 if (_gameManager.CurrentPhase == GamePhase.Preparation)
                 {
                     _gameManager.PlayerReady(1);
@@ -93,7 +93,7 @@ namespace RayLibAutoChess
 
             if (_gameManager.CurrentPhase == GamePhase.Preparation)
             {
-                // Upgrade / Ultimate for currently selected unit (Blue has priority if both selected)
+                // Улучшение / Ультимейт для текущего выбранного юнита (синий имеет приоритет, если выбраны оба)
                 if (Raylib.IsKeyPressed(KeyboardKey.KEY_Z))
                 {
                     try { _gameManager.UndoLastAction(); } catch { /* ignore for UI */ }
@@ -110,7 +110,7 @@ namespace RayLibAutoChess
 
                 if (Raylib.IsKeyPressed(KeyboardKey.KEY_O))
                 {
-                    // If already in targeting mode, cancel it
+                    // Если уже в режиме прицеливания, отменяем его
                     if (_isSelectingUltimateTarget)
                     {
                         _isSelectingUltimateTarget = false;
@@ -126,7 +126,7 @@ namespace RayLibAutoChess
 
                             if (ultimate is ITargetedUltimate targeted)
                             {
-                                // Enter targeting mode instead of spending gold immediately.
+                                // Входим в режим прицеливания вместо немедленной траты золота.
                                 if (ultimate.CanUseUltimate() && inventory.Gold >= EconomyManager.GetUltimateCost(ultimate))
                                 {
                                     _isSelectingUltimateTarget = true;
@@ -148,7 +148,7 @@ namespace RayLibAutoChess
         {
             var mousePos = Raylib.GetMousePosition();
 
-            // Handle GameOver buttons
+            // Обрабатываем кнопки GameOver
             if (_gameManager.CurrentPhase == GamePhase.GameOver)
             {
                 if (IsPointInRect(mousePos, GetRestartGameButtonRect()))
@@ -166,7 +166,7 @@ namespace RayLibAutoChess
 
             if (_gameManager.CurrentPhase == GamePhase.Preparation)
             {
-                // Action buttons first
+                // Сначала кнопки действий
                 if (TryHandleActionButtonsClick(mousePos, Team.Blue)) return;
                 if (TryHandleActionButtonsClick(mousePos, Team.Red)) return;
 
@@ -174,7 +174,7 @@ namespace RayLibAutoChess
                 if (TryHandleInventoryClick(mousePos, Team.Red)) return;
             }
 
-            // Check if clicked on board
+            // Проверяем, кликнули ли по доске
             if (mousePos.Y >= _boardOffsetY && mousePos.Y <= _boardOffsetY + BoardRows * CellSize)
             {
                 int cellX = (int)((mousePos.X - _boardOffsetX) / CellSize);
@@ -182,7 +182,7 @@ namespace RayLibAutoChess
 
                 if (cellX >= 0 && cellX < BoardCols && cellY >= 0 && cellY < BoardRows)
                 {
-                    // Handle ultimate targeting if in targeting mode
+                    // Обрабатываем прицеливание ультимейта, если в режиме прицеливания
                     if (_isSelectingUltimateTarget && _ultimateCaster != null)
                     {
                         if (TryHandleUltimateTargetClick(mousePos))
@@ -192,7 +192,7 @@ namespace RayLibAutoChess
                     var team = cellY == 0 ? Team.Blue : Team.Red;
                     var selected = team == Team.Blue ? _selectedBlueUnit : _selectedRedUnit;
 
-                    // Place only if player selected a unit from their inventory
+                    // Размещаем только если игрок выбрал юнита из своего инвентаря
                     if (_gameManager.CurrentPhase == GamePhase.Preparation && selected != null)
                     {
                         bool placed = false;
@@ -209,7 +209,7 @@ namespace RayLibAutoChess
 
         private bool TryHandleUltimateTargetClick(System.Numerics.Vector2 mousePos)
         {
-            // Only handle clicks on the board while targeting
+            // Обрабатываем только клики по доске во время прицеливания
             int boardW = BoardCols * CellSize;
             int boardH = BoardRows * CellSize;
 
@@ -223,15 +223,15 @@ namespace RayLibAutoChess
             var cell = _gameManager.GameBoard.GetCell(cellX, cellY);
             var target = cell?.ExistingCharacter;
 
-            // If no target at clicked cell, don't consume the click
+            // Если нет цели в кликнутой клетке, не потребляем клик
             if (target == null)
                 return false;
 
-            // Must be ally (and alive)
+            // Должен быть союзником (и живым)
             if (target.Team != _ultimateCasterTeam || !target.IsAlive())
                 return false;
 
-            // If caster is an ICharacter, don't allow targeting self for buff ultimates
+            // Если кастер является ICharacter, не позволяем прицеливаться на себя для баффовых ультимейтов
             if (_ultimateCaster is ICharacter caster && target.ID == caster.ID)
                 return false;
 
@@ -247,7 +247,7 @@ namespace RayLibAutoChess
             }
             catch
             {
-                // keep targeting mode
+                // сохраняем режим прицеливания
             }
 
             return true;
@@ -255,11 +255,11 @@ namespace RayLibAutoChess
 
         private bool TryHandleInventoryClick(System.Numerics.Vector2 mousePos, Team team)
         {
-            // Inventory list inside panel
+            // Список инвентаря внутри панели
             int panelX = GetPanelX(team);
             int panelY = PanelTopY;
             int listX = panelX + PanelPadding;
-            int listY = panelY + 260;
+            int listY = panelY + 290; // То же самое, что и в DrawInventoryPanel
             int listW = PanelWidth - 2 * PanelPadding;
             int rowH = PanelRowHeight;
 
@@ -316,17 +316,17 @@ namespace RayLibAutoChess
 
         private void DrawBoard()
         {
-            // Draw board background
+            // Рисуем фон доски
             int boardW = BoardCols * CellSize;
             int boardH = BoardRows * CellSize;
             Raylib.DrawRectangle(_boardOffsetX - 12, _boardOffsetY - 12, boardW + 24, boardH + 24, new Color(220, 223, 230, 255));
             Raylib.DrawRectangleLines(_boardOffsetX - 12, _boardOffsetY - 12, boardW + 24, boardH + 24, new Color(140, 145, 155, 255));
 
-            // Row tinting to make halves obvious
+            // Затемнение рядов, чтобы половинки были очевидны
             DrawRectangle(_boardOffsetX, _boardOffsetY, boardW, CellSize, new Color(70, 120, 255, 26));
             DrawRectangle(_boardOffsetX, _boardOffsetY + CellSize, boardW, CellSize, new Color(255, 70, 70, 26));
 
-            // Draw cells
+            // Рисуем клетки
             for (int y = 0; y < BoardRows; y++)
             {
                 for (int x = 0; x < BoardCols; x++)
@@ -341,7 +341,7 @@ namespace RayLibAutoChess
                 }
             }
 
-            // Row labels
+            // Метки рядов
             DrawTextEx(_font, "BLUE ROW", new System.Numerics.Vector2(_boardOffsetX, _boardOffsetY - 30), 16, 1, new Color(40, 110, 255, 255));
             DrawTextEx(_font, "RED ROW", new System.Numerics.Vector2(_boardOffsetX, _boardOffsetY + boardH + 16), 16, 1, new Color(230, 60, 60, 255));
 
@@ -365,14 +365,14 @@ namespace RayLibAutoChess
                         var unit = cell.ExistingCharacter;
                         Color unitColor = unit.Team == Team.Blue ? Color.BLUE : Color.RED;
 
-                        // Draw unit as colored circle
+                        // Рисуем юнит как цветной круг
                         int centerX = _boardOffsetX + x * CellSize + CellSize / 2;
                         int centerY = _boardOffsetY + y * CellSize + CellSize / 2;
                         Raylib.DrawCircle(centerX + 2, centerY + 3, 26, new Color(0, 0, 0, 60));
                         Raylib.DrawCircle(centerX, centerY, 25, unitColor);
                         Raylib.DrawCircleLines(centerX, centerY, 25, Color.RAYWHITE);
 
-                        // Draw health text
+                        // Рисуем текст здоровья
                         string healthText = $"{unit.Health:F0}";
                         var textSize = MeasureTextEx(_font, healthText, 16, 1);
                         DrawTextEx(_font, healthText,
@@ -388,7 +388,7 @@ namespace RayLibAutoChess
             DrawPlayerPanel(Team.Blue);
             DrawPlayerPanel(Team.Red);
 
-            // Bottom hint (short)
+            // Подсказка снизу (короткая)
             DrawTextEx(_font, "Tip: click your inventory unit, then click your row to place it.", new System.Numerics.Vector2(20, ScreenHeight - 30), UiTextSm, 1, new Color(80, 80, 92, 255));
         }
 
@@ -404,11 +404,11 @@ namespace RayLibAutoChess
             string teamName = team == Team.Blue ? "BLUE PLAYER" : "RED PLAYER";
             var selected = team == Team.Blue ? _selectedBlueUnit : _selectedRedUnit;
 
-            // Panel background
+            // Фон панели
             DrawRectangle(panelX, panelY, PanelWidth, panelH, Color.RAYWHITE);
             DrawRectangleLines(panelX, panelY, PanelWidth, panelH, new Color(160, 165, 175, 255));
 
-            // Header strip
+            // Полоса заголовка
             DrawRectangle(panelX, panelY, PanelWidth, 42, teamColor);
             DrawTextEx(_font, teamName, new System.Numerics.Vector2(innerX, panelY + 11), UiTextLg, 1, Color.RAYWHITE);
 
@@ -427,7 +427,7 @@ namespace RayLibAutoChess
             int panelX = GetPanelX(team);
             int panelY = PanelTopY;
             int listX = panelX + PanelPadding;
-            int listY = panelY + 290; // Moved down to avoid overlap with buttons
+            int listY = panelY + 290; // Смещено вниз, чтобы избежать наложения с кнопками
             int listW = PanelWidth - 2 * PanelPadding;
             int listH = 8 * PanelRowHeight;
 
@@ -465,17 +465,17 @@ namespace RayLibAutoChess
                     new System.Numerics.Vector2(ScreenWidth / 2 - textSize.X / 2, ScreenHeight / 2 - textSize.Y / 2),
                     48, 1, Color.RED);
 
-                // Draw restart button
+                // Рисуем кнопку перезапуска
                 DrawButton(GetRestartGameButtonRect(), "НАЧАТЬ СНАЧАЛА", true, Team.Blue, UiTextMd);
 
-                // Draw quit button
+                // Рисуем кнопку выхода
                 DrawButton(GetQuitGameButtonRect(), "ЗАКРЫТЬ ИГРУ", true, Team.Red, UiTextMd);
             }
 
-            // Inventory panels during preparation
+            // Панели инвентаря во время подготовки
             if (_gameManager.CurrentPhase == GamePhase.Preparation)
             {
-                // Panels are drawn in DrawUI()
+                // Панели рисуются в DrawUI()
             }
         }
 
@@ -506,7 +506,7 @@ namespace RayLibAutoChess
 
             var selected = team == Team.Blue ? _selectedBlueUnit : _selectedRedUnit;
             if (selected == null && (IsPointInRect(mousePos, GetUpgradeButtonRect(team)) || IsPointInRect(mousePos, GetUltimateButtonRect(team))))
-                return true; // click consumed, but nothing to do
+                return true; // клик потреблен, но ничего не делаем
 
             if (IsPointInRect(mousePos, GetUpgradeButtonRect(team)))
             {
@@ -521,7 +521,7 @@ namespace RayLibAutoChess
                     var inventory = _gameManager.GetPlayerInventory(team);
                     if (ultimate is ITargetedUltimate targeted)
                     {
-                        // Enter targeting mode instead of spending gold immediately.
+                        // Входим в режим прицеливания вместо немедленной траты золота.
                         if (inventory.Gold >= EconomyManager.GetUltimateCost(ultimate))
                         {
                             _isSelectingUltimateTarget = true;
@@ -540,32 +540,32 @@ namespace RayLibAutoChess
             return false;
         }
 
-        private Rectangle GetUpgradeButtonRect(Team team)
-        {
-            int panelX = GetPanelX(team);
-            int panelY = PanelTopY;
-            int innerX = panelX + PanelPadding;
-            int btnW = PanelWidth - 2 * PanelPadding;
-            return new Rectangle(innerX, panelY + 200, btnW, 42);
-        }
-
         private Rectangle GetUltimateButtonRect(Team team)
         {
             int panelX = GetPanelX(team);
             int panelY = PanelTopY;
             int innerX = panelX + PanelPadding;
             int btnW = PanelWidth - 2 * PanelPadding;
-            int btnH = PanelRowHeight;
-            int btnY = panelY + 160; // Fixed position after selected text
+            int btnH = 42; // Та же высота, что и у кнопки улучшения
+            int btnY = panelY + 165; // Позиция после текста выбранного
 
             return new Rectangle(innerX, btnY, btnW, btnH);
+        }
+
+        private Rectangle GetUpgradeButtonRect(Team team)
+        {
+            int panelX = GetPanelX(team);
+            int panelY = PanelTopY;
+            int innerX = panelX + PanelPadding;
+            int btnW = PanelWidth - 2 * PanelPadding;
+            return new Rectangle(innerX, panelY + 210, btnW, 42);
         }
 
         private Rectangle GetRestartGameButtonRect()
         {
             int centerX = ScreenWidth / 2;
-            // Position buttons well below the "GAME OVER" text (48px font height + 50px padding)
-            int centerY = ScreenHeight / 2 + 50 + 50; // text height + padding
+            // Располагаем кнопки значительно ниже текста "GAME OVER" (48px высота шрифта + 50px отступ)
+            int centerY = ScreenHeight / 2 + 50 + 50; // высота текста + отступ
 
             return new Rectangle(
                 centerX - GameOverButtonWidth / 2,
@@ -578,7 +578,7 @@ namespace RayLibAutoChess
         private Rectangle GetQuitGameButtonRect()
         {
             int centerX = ScreenWidth / 2;
-            // Position second button below the first with proper spacing
+            // Располагаем вторую кнопку ниже первой с правильным отступом
             int centerY = ScreenHeight / 2 + 50 + 50 + GameOverButtonHeight + GameOverButtonSpacing;
 
             return new Rectangle(
@@ -624,7 +624,7 @@ namespace RayLibAutoChess
             int boardW = BoardCols * CellSize;
             int boardH = BoardRows * CellSize;
             _boardOffsetX = (ScreenWidth - boardW) / 2;
-            _boardOffsetY = (ScreenHeight - boardH) / 2; // keep board exactly centered
+            _boardOffsetY = (ScreenHeight - boardH) / 2; // держим доску точно по центру
         }
 
         private (double damage, bool isBuffed) GetDisplayedDamage(ICharacter unit)
@@ -641,7 +641,7 @@ namespace RayLibAutoChess
         {
             double multiplier = 1.0;
 
-            // Mage buff is applied to attackers on the board; for UI we reflect current active buffs.
+            // Бафф мага применяется к атакующим на доске; для UI мы отражаем текущие активные баффы.
             foreach (var u in _gameManager.GameBoard.GetFieldUnits(team))
             {
                 if (u is Mage mage && mage.IsUltimateActive && mage.ID != excludeUnitId)
