@@ -2,7 +2,7 @@ using System;
 
 namespace RayLibAutoChess.Entities
 {
-    public class Trickster : ICharacter, IDamager, IEvading, IInformational, IUltimateActivatable, IUltimateResettable, ITargetSelectable
+    public class Trickster : ICharacter, IDamager, IEvading, IUltimate, IInformational, IUltimateActivatable, IUltimateResettable, ITargetSelectable
     {
         private readonly int _maximumObtainableLevel = 4;
 

@@ -2,7 +2,7 @@ using System;
 
 namespace RayLibAutoChess.Entities
 {
-    public class Tank : ICharacter, IDamager, IInformational, IUltimateActivatable, IUltimateResettable, ITargetSelectable
+    public class Tank : ICharacter, IDamager, IInformational, IUltimate, IUltimateActivatable, IUltimateResettable, ITargetSelectable
     {
         private readonly int _maximumObtainableLevel = 4;
 

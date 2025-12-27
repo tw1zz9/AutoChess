@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace RayLibAutoChess.Entities
 {
-    public class Healer : ICharacter, IHealer, IInformational, IUltimateActivatable, IUltimateResettable, ITargetSelectable
+    public class Healer : ICharacter, IHealer, IUltimate, IInformational, IUltimateActivatable, IUltimateResettable, ITargetSelectable
     {
         private readonly int _maximumObtainableLevel = 4;
 
@@ -25,6 +25,7 @@ namespace RayLibAutoChess.Entities
 
         private ICharacter? _selectedTarget;
         public bool IsUltimateActive { get; private set; }
+        private bool _ultimateQueued;
         private bool _deadNameSet;
 
         public double AreaHealPower { get; private set; } = 50;
@@ -142,7 +143,7 @@ namespace RayLibAutoChess.Entities
         public string UltimateDescription => $"Heals all allies for {HealPower * 0.5:F0} health during combat";
         public int UltimateCost => 10;
 
-        public bool CanUseUltimate() => IsAlive() && !IsUltimateActive;
+        public bool CanUseUltimate() => IsAlive() && !_ultimateQueued && !IsUltimateActive;
 
         public void UseUltimate()
         {
@@ -152,6 +153,7 @@ namespace RayLibAutoChess.Entities
         public void ResetUltimateState()
         {
             IsUltimateActive = false;
+            _ultimateQueued = false;
         }
 
         public void ApplyActiveUltimateEffect()

@@ -240,7 +240,7 @@ namespace RayLibAutoChess
             int panelX = GetPanelX(team);
             int panelY = PanelTopY;
             int listX = panelX + PanelPadding;
-            int listY = panelY + 260;
+            int listY = panelY + 290; // Same as in DrawInventoryPanel
             int listW = PanelWidth - 2 * PanelPadding;
             int rowH = PanelRowHeight;
 
@@ -452,6 +452,8 @@ namespace RayLibAutoChess
             var inventory = _gameManager.GetPlayerInventory(team);
             var selected = team == Team.Blue ? _selectedBlueUnit : _selectedRedUnit;
 
+            Console.WriteLine($"DrawActionButtons - Team: {team}, Phase: {_gameManager.CurrentPhase}, Selected: {selected?.Name}, Gold: {inventory.Gold}");
+
             bool canUpgrade = _gameManager.CurrentPhase == GamePhase.Preparation
                               && selected != null
                               && inventory.Gold >= EconomyManager.GetUpgradeCost(selected);
@@ -466,6 +468,11 @@ namespace RayLibAutoChess
 
             DrawButton(GetUpgradeButtonRect(team), $"UPGRADE  (-{upgradeCost}g)", canUpgrade, team, UiTextMd);
             DrawButton(GetUltimateButtonRect(team), $"ULTIMATE (-{ultimateCost}g)", canUltimate, team, UiTextMd);
+
+            if (!canUltimate && selected != null)
+            {
+                Console.WriteLine($"Ultimate not available: Phase={_gameManager.CurrentPhase}, IsIUltimate={selected is IUltimate}, CanUse={(selected as IUltimate)?.CanUseUltimate()}, Gold={inventory.Gold}, Cost={ultimateCost}");
+            }
         }
 
         private bool TryHandleActionButtonsClick(System.Numerics.Vector2 mousePos, Team team)
