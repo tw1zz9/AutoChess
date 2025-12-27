@@ -16,10 +16,10 @@ namespace RayLibAutoChess
 
             return unit.Level switch
             {
-                1 => 10, // 1->2 level
-                2 => 15, // 2->3 level
-                3 => 20, // 3->4 level
-                _ => 0   // Max level or invalid
+                1 => 10, // 1->2 уровень
+                2 => 15, // 2->3 уровень
+                3 => 20, // 3->4 уровень
+                _ => 0   // Максимальный уровень или недопустимо
             };
         }
 

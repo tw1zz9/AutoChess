@@ -19,4 +19,9 @@
     <None Include="assets/**/*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Tests/**/*" />
+    <None Include="Tests/**/*" />
+  </ItemGroup>
+
 </Project>

@@ -16,19 +16,6 @@ namespace RayLibAutoChess
 
         private ICharacter? _tauntingTank;
 
-        public void SetReady(int playerId)
-        {
-            if (playerId != 1 && playerId != 2)
-                throw new ArgumentException("Player ID must be 1 or 2.", nameof(playerId));
-
-            if (playerId == 1) _player1Ready = true;
-            if (playerId == 2) _player2Ready = true;
-
-            if (_player1Ready && _player2Ready)
-            {
-                Console.WriteLine("TurnManager.SetReady called - use GameManager.ResolveBattle instead");
-            }
-        }
 
         public void RegisterAttacker(IDamager damager)
         {
@@ -81,8 +68,6 @@ namespace RayLibAutoChess
 
             for (int combatRound = 0; combatRound < COMBAT_ROUNDS; combatRound++)
             {
-                Console.WriteLine($"Combat Round {combatRound + 1}/{COMBAT_ROUNDS}");
-
                 ApplyOneTurnUltimateEffects(allUnits);
 
                 foreach (var effect in _oneTurnEffects)
@@ -105,7 +90,6 @@ namespace RayLibAutoChess
                         {
                             ally.Heal(ultimateHealAmount);
                         }
-                        Console.WriteLine($"{healerEntity.Name} used Divine Light! Healed all allies for {ultimateHealAmount:F0} health each");
                     }
                 }
 
@@ -114,7 +98,6 @@ namespace RayLibAutoChess
 
                 if (!currentBlueUnits.Any() || !currentRedUnits.Any())
                 {
-                    Console.WriteLine($"Combat ended early in round {combatRound + 1}");
                     break;
                 }
             }

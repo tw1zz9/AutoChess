@@ -90,7 +90,7 @@ namespace RayLibAutoChess
             {
                 if (Raylib.IsKeyPressed(KeyboardKey.KEY_Z))
                 {
-                    try { _gameManager.UndoLastAction(); } catch { /* ignore for UI */ }
+                    try { _gameManager.UndoLastAction(); } catch { /* игнорировать для UI */ }
                 }
 
                 if (Raylib.IsKeyPressed(KeyboardKey.KEY_U))
@@ -98,7 +98,7 @@ namespace RayLibAutoChess
                     var unit = _selectedBlueUnit ?? _selectedRedUnit;
                     if (unit != null)
                     {
-                        try { _gameManager.UpgradeUnit(unit); } catch { /* ignore for UI */ }
+                        try { _gameManager.UpgradeUnit(unit); } catch { /* игнорировать для UI */ }
                     }
                 }
 
@@ -128,7 +128,7 @@ namespace RayLibAutoChess
                             }
                             else
                             {
-                                try { _gameManager.UseUltimate(ultimate); } catch { /* ignore for UI */ }
+                                try { _gameManager.UseUltimate(ultimate); } catch { /* игнорировать для UI */ }
                             }
                         }
                     }
@@ -183,7 +183,7 @@ namespace RayLibAutoChess
                     if (_gameManager.CurrentPhase == GamePhase.Preparation && selected != null)
                     {
                         bool placed = false;
-                        try { placed = _gameManager.PlaceUnitOnBoard(selected, cellX, cellY); } catch { /* ignore for UI */ }
+                        try { placed = _gameManager.PlaceUnitOnBoard(selected, cellX, cellY); } catch { /* игнорировать для UI */ }
                         if (placed)
                         {
                             if (team == Team.Blue) _selectedBlueUnit = null;
@@ -230,6 +230,8 @@ namespace RayLibAutoChess
             }
             catch
             {
+                _isSelectingUltimateTarget = false;
+                _ultimateCaster = null;
             }
 
             return true;
@@ -240,14 +242,14 @@ namespace RayLibAutoChess
             int panelX = GetPanelX(team);
             int panelY = PanelTopY;
             int listX = panelX + PanelPadding;
-            int listY = panelY + 290; // Same as in DrawInventoryPanel
+            int listY = panelY + 290;
             int listW = PanelWidth - 2 * PanelPadding;
             int rowH = PanelRowHeight;
 
             if (mousePos.X < listX || mousePos.X > listX + listW) return false;
 
             var inventory = _gameManager.GetPlayerInventory(team);
-            var units = inventory.GetAllUnits().ToList();
+            var units = inventory.GetAllUnits().Where(u => u.IsAlive()).ToList();
 
             for (int i = 0; i < units.Count && i < 8; i++)
             {
@@ -385,7 +387,7 @@ namespace RayLibAutoChess
             DrawTextEx(_font, teamName, new System.Numerics.Vector2(innerX, panelY + 11), UiTextLg, 1, Color.RAYWHITE);
 
             DrawTextEx(_font, $"Gold: {inventory.Gold}", new System.Numerics.Vector2(innerX, panelY + 60), 22, 1, new Color(30, 30, 36, 255));
-            DrawTextEx(_font, $"Inventory: {inventory.GetAllUnits().Count()}/8", new System.Numerics.Vector2(innerX, panelY + 95), UiTextMd, 1, new Color(70, 70, 78, 255));
+            DrawTextEx(_font, $"Inventory: {inventory.GetAllUnits().Count(u => u.IsAlive())}/8", new System.Numerics.Vector2(innerX, panelY + 95), UiTextMd, 1, new Color(70, 70, 78, 255));
 
             string selectedText = selected == null ? "Selected: (none)" : $"Selected: {selected.Name}  L{selected.Level}";
             DrawTextEx(_font, selectedText, new System.Numerics.Vector2(innerX, panelY + 130), UiTextMd, 1, new Color(30, 30, 36, 255));
@@ -399,7 +401,7 @@ namespace RayLibAutoChess
             int panelX = GetPanelX(team);
             int panelY = PanelTopY;
             int listX = panelX + PanelPadding;
-            int listY = panelY + 290; // Moved down to avoid overlap with buttons
+            int listY = panelY + 290;
             int listW = PanelWidth - 2 * PanelPadding;
             int listH = 8 * PanelRowHeight;
 
@@ -408,7 +410,7 @@ namespace RayLibAutoChess
             DrawRectangleLines(listX, listY, listW, listH, new Color(190, 195, 205, 255));
 
             var inventory = _gameManager.GetPlayerInventory(team);
-            var units = inventory.GetAllUnits().ToList();
+            var units = inventory.GetAllUnits().Where(u => u.IsAlive()).ToList();
 
             for (int i = 0; i < units.Count && i < 8; i++)
             {
@@ -437,13 +439,9 @@ namespace RayLibAutoChess
                     new System.Numerics.Vector2(ScreenWidth / 2 - textSize.X / 2, ScreenHeight / 2 - textSize.Y / 2),
                     48, 1, Color.RED);
 
-                DrawButton(GetRestartGameButtonRect(), "НАЧАТЬ СНАЧАЛА", true, Team.Blue, UiTextMd);
+                DrawButton(GetRestartGameButtonRect(), "RESTART GAME", true, Team.Blue, UiTextMd);
 
-                DrawButton(GetQuitGameButtonRect(), "ЗАКРЫТЬ ИГРУ", true, Team.Red, UiTextMd);
-            }
-
-            if (_gameManager.CurrentPhase == GamePhase.Preparation)
-            {
+                DrawButton(GetQuitGameButtonRect(), "FINISH GAME", true, Team.Red, UiTextMd);
             }
         }
 
@@ -451,8 +449,6 @@ namespace RayLibAutoChess
         {
             var inventory = _gameManager.GetPlayerInventory(team);
             var selected = team == Team.Blue ? _selectedBlueUnit : _selectedRedUnit;
-
-            Console.WriteLine($"DrawActionButtons - Team: {team}, Phase: {_gameManager.CurrentPhase}, Selected: {selected?.Name}, Gold: {inventory.Gold}");
 
             bool canUpgrade = _gameManager.CurrentPhase == GamePhase.Preparation
                               && selected != null
@@ -469,10 +465,6 @@ namespace RayLibAutoChess
             DrawButton(GetUpgradeButtonRect(team), $"UPGRADE  (-{upgradeCost}g)", canUpgrade, team, UiTextMd);
             DrawButton(GetUltimateButtonRect(team), $"ULTIMATE (-{ultimateCost}g)", canUltimate, team, UiTextMd);
 
-            if (!canUltimate && selected != null)
-            {
-                Console.WriteLine($"Ultimate not available: Phase={_gameManager.CurrentPhase}, IsIUltimate={selected is IUltimate}, CanUse={(selected as IUltimate)?.CanUseUltimate()}, Gold={inventory.Gold}, Cost={ultimateCost}");
-            }
         }
 
         private bool TryHandleActionButtonsClick(System.Numerics.Vector2 mousePos, Team team)
@@ -481,11 +473,11 @@ namespace RayLibAutoChess
 
             var selected = team == Team.Blue ? _selectedBlueUnit : _selectedRedUnit;
             if (selected == null && (IsPointInRect(mousePos, GetUpgradeButtonRect(team)) || IsPointInRect(mousePos, GetUltimateButtonRect(team))))
-                return true; // click consumed, but nothing to do
+                return true; // клик обработан, но ничего не делаем
 
             if (IsPointInRect(mousePos, GetUpgradeButtonRect(team)))
             {
-                try { if (selected != null) _gameManager.UpgradeUnit(selected); } catch { }
+                try { if (selected != null) _gameManager.UpgradeUnit(selected); } catch { /* игнорировать для UI */ }
                 return true;
             }
 
@@ -505,7 +497,7 @@ namespace RayLibAutoChess
                     }
                     else
                     {
-                        try { _gameManager.UseUltimate(ultimate); } catch { }
+                        try { _gameManager.UseUltimate(ultimate); } catch { /* игнорировать для UI */ }
                     }
                 }
                 return true;
@@ -530,7 +522,7 @@ namespace RayLibAutoChess
             int innerX = panelX + PanelPadding;
             int btnW = PanelWidth - 2 * PanelPadding;
             int btnH = PanelRowHeight;
-            int btnY = panelY + 160; // Fixed position after selected text
+            int btnY = panelY + 160; 
 
             return new Rectangle(innerX, btnY, btnW, btnH);
         }
@@ -538,7 +530,7 @@ namespace RayLibAutoChess
         private Rectangle GetRestartGameButtonRect()
         {
             int centerX = ScreenWidth / 2;
-            int centerY = ScreenHeight / 2 + 50 + 50; // text height + padding
+            int centerY = ScreenHeight / 2 + 50 + 50; 
 
             return new Rectangle(
                 centerX - GameOverButtonWidth / 2,
@@ -596,7 +588,7 @@ namespace RayLibAutoChess
             int boardW = BoardCols * CellSize;
             int boardH = BoardRows * CellSize;
             _boardOffsetX = (ScreenWidth - boardW) / 2;
-            _boardOffsetY = (ScreenHeight - boardH) / 2; // keep board exactly centered
+            _boardOffsetY = (ScreenHeight - boardH) / 2; 
         }
 
         private (double damage, bool isBuffed) GetDisplayedDamage(ICharacter unit)

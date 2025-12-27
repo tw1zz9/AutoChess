@@ -5,20 +5,20 @@ namespace RayLibAutoChess
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Starting Auto Chess Game...");
+            Console.WriteLine("Запуск игры Auto Chess...");
 
             try
             {
                 var gameManager = new GameManager();
                 var renderer = new Render(gameManager);
 
-                Console.WriteLine("Game initialized. Starting renderer...");
+                Console.WriteLine("Игра инициализирована. Запуск рендерера...");
                 renderer.Run();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                Console.WriteLine($"Ошибка: {ex.Message}");
+                Console.WriteLine($"Стек вызовов: {ex.StackTrace}");
             }
         }
     }

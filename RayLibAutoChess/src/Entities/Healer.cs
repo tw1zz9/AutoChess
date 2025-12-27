@@ -65,7 +65,6 @@ namespace RayLibAutoChess.Entities
             if (_selectedTarget == null || !_selectedTarget.IsAlive()) return;
 
             _selectedTarget.Heal(HealPower);
-            Console.WriteLine($"{Name} healed {_selectedTarget.Name} for {HealPower} health");
         }
 
         public void HealAll(IEnumerable<ICharacter> allies)
@@ -74,7 +73,6 @@ namespace RayLibAutoChess.Entities
             {
                 ally.Heal(AreaHealPower);
             }
-            Console.WriteLine($"{Name} healed all allies for {AreaHealPower} health each");
         }
 
         public void ActivateMassHeal()

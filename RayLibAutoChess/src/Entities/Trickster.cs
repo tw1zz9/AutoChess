@@ -92,13 +92,11 @@ namespace RayLibAutoChess.Entities
 
             if (IsUltimateActive)
             {
-                Console.WriteLine($"{Name} perfectly dodged the attack with ultimate!");
                 return;
             }
 
             if (Dodge())
             {
-                Console.WriteLine($"{Name} dodged the attack!");
                 return;
             }
 
@@ -190,7 +188,6 @@ namespace RayLibAutoChess.Entities
             if (context.Target == this)
             {
                 context.Damage = 0;
-                Console.WriteLine($"{Name} perfectly dodged the attack!");
             }
         }
 

@@ -55,8 +55,6 @@ namespace RayLibAutoChess
             _suppressUndoRecording = false;
 
             InitializeGame();
-
-            Console.WriteLine("Game restarted!");
         }
 
         private void InitializeGame()
@@ -69,8 +67,6 @@ namespace RayLibAutoChess
 
             InitializePlayerUnits(Team.Blue, Player1Inventory);
             InitializePlayerUnits(Team.Red, Player2Inventory);
-
-            Console.WriteLine("Auto Chess game initialized!");
         }
 
         private void InitializePlayerUnits(Team team, PlayersInventory inventory)
@@ -103,7 +99,6 @@ namespace RayLibAutoChess
 
             if (!blueHasUnits || !redHasUnits)
             {
-                Console.WriteLine("Waiting for both players to place at least one unit on the board.");
                 return;
             }
 
@@ -119,7 +114,6 @@ namespace RayLibAutoChess
         private void StartCombatPhase()
         {
             SetGamePhase(GamePhase.Combat);
-            Console.WriteLine($"Round {RoundNumber}: Combat phase started!");
 
             _undoStack.Clear();
 
@@ -210,8 +204,6 @@ namespace RayLibAutoChess
 
             GameBoard.ClearBoard();
             ResetAllTargets(Player1Inventory.GetAllUnits().Concat(Player2Inventory.GetAllUnits()));
-
-            Console.WriteLine($"Round {RoundNumber}: Preparation phase started!");
         }
 
         private void ResetAllTargets(IEnumerable<ICharacter> units)
@@ -228,7 +220,7 @@ namespace RayLibAutoChess
         private void EndGame(Team winner)
         {
             SetGamePhase(GamePhase.GameOver);
-            Console.WriteLine($"Game Over! Winner: {winner}");
+            Console.WriteLine($"Игра окончена! Победитель: {winner}");
         }
 
         public bool PlaceUnitOnBoard(ICharacter unit, int x, int y)
@@ -360,7 +352,6 @@ namespace RayLibAutoChess
         public void SetGamePhase(GamePhase newPhase)
         {
             CurrentPhase = newPhase;
-            Console.WriteLine($"Game phase changed to: {newPhase}");
         }
 
         public void SetRoundNumber(int roundNumber)
