@@ -69,7 +69,7 @@ namespace RayLibAutoChess
             int beforeLevel = unit.Level;
             unit.LevelUp();
             if (unit.Level == beforeLevel)
-                return false; // уже максимальный уровень (или улучшение не имело эффекта) -> не списываем
+                return false;
 
             RemoveAmount(cost);
             return true;

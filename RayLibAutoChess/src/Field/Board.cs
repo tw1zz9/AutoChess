@@ -9,7 +9,6 @@ namespace RayLibAutoChess
         public int Width => _cells.GetLength(0);
         public int Height => _cells.GetLength(1);
 
-        // Общая доска: 5 колонок x 2 ряда (ряд синих + ряд красных)
         public Board(int width = 5, int height = 2)
         {
             _cells = new Cell[width, height];

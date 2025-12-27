@@ -68,7 +68,6 @@ namespace RayLibAutoChess
         void UseUltimate();
     }
 
-    // Ультимейт, который требует выбора конкретной цели перед применением.
     public interface ITargetedUltimate : IUltimate
     {
         void SetUltimateTarget(ICharacter target);

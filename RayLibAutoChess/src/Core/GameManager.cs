@@ -47,7 +47,6 @@ namespace RayLibAutoChess
 
         public void RestartGame()
         {
-            // Сбрасываем все состояние игры
             CurrentPhase = GamePhase.Preparation;
             RoundNumber = 1;
             _player1Ready = false;
@@ -55,7 +54,6 @@ namespace RayLibAutoChess
             _undoStack.Clear();
             _suppressUndoRecording = false;
 
-            // Переинициализируем игру
             InitializeGame();
 
             Console.WriteLine("Game restarted!");
@@ -100,13 +98,11 @@ namespace RayLibAutoChess
             if (CurrentPhase != GamePhase.Preparation)
                 throw new InvalidOperationException("Can only ready players during preparation phase.");
 
-            // Проверяем, есть ли у обоих игроков хотя бы один юнит на доске
             bool blueHasUnits = GameBoard.GetFieldUnits(Team.Blue).Any();
             bool redHasUnits = GameBoard.GetFieldUnits(Team.Red).Any();
 
             if (!blueHasUnits || !redHasUnits)
             {
-                // Пока не начинаем бой, ждем пока оба игрока разместят юнитов
                 Console.WriteLine("Waiting for both players to place at least one unit on the board.");
                 return;
             }
@@ -125,7 +121,6 @@ namespace RayLibAutoChess
             SetGamePhase(GamePhase.Combat);
             Console.WriteLine($"Round {RoundNumber}: Combat phase started!");
 
-            // Отмена доступна только на этапе подготовки.
             _undoStack.Clear();
 
             ExecuteCombat();
@@ -265,7 +260,6 @@ namespace RayLibAutoChess
 
                 RecordUndo(() =>
                 {
-                    // Отмена размещения: убираем с доски и возвращаем в инвентарь.
                     GameBoard.RemoveUnit(unit);
                     inventory.AddUnit(unit);
                 });
@@ -280,7 +274,6 @@ namespace RayLibAutoChess
 
             GameBoard.RemoveUnit(unit);
 
-            // Возвращаем обратно в инвентарь владельца, чтобы игроки могли переразместить во время подготовки.
             var inventory = unit.Team == Team.Blue ? Player1Inventory : Player2Inventory;
             inventory.AddUnit(unit);
         }
